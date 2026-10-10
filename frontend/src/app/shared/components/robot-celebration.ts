@@ -39,7 +39,7 @@ export class RobotCelebrationService {
     p {
       margin: 0;
       color: #20313c;
-      font: 36px/1.8 'Press Start 2P', 'Courier New', monospace;
+      font: 36px/1.8 'Silkscreen', monospace;
       text-shadow: 2px 2px 0 #e7b83f;
       white-space: nowrap;
     }
