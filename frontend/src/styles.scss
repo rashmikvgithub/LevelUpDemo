@@ -13,30 +13,152 @@ html {
         primary: mat.$azure-palette,
         tertiary: mat.$blue-palette,
       ),
-      typography: Roboto,
-      density: 0,
+      typography: 'IBM Plex Mono',
+      density: -1,
     )
   );
+  --pixel-ink: #20313c;
+  --pixel-paper: #f4efdc;
+  --pixel-panel: #fffdf3;
+  --pixel-teal: #177b72;
+  --pixel-coral: #e76f61;
+  --pixel-gold: #e7b83f;
+  --mat-sys-primary: var(--pixel-teal);
+  --mat-sys-on-primary: #fffdf3;
+  --mat-sys-primary-container: #b9e9dc;
+  --mat-sys-on-primary-container: #103f3a;
+  --mat-sys-secondary: #b7564b;
+  --mat-sys-on-secondary: #fffdf3;
+  --mat-sys-secondary-container: #f8d2c9;
+  --mat-sys-on-secondary-container: #51231f;
+  --mat-sys-tertiary: #7b5a00;
+  --mat-sys-on-tertiary: #fffdf3;
+  --mat-sys-tertiary-container: #f7df99;
+  --mat-sys-on-tertiary-container: #382800;
+  --mat-sys-surface: var(--pixel-paper);
+  --mat-sys-on-surface: var(--pixel-ink);
+  --mat-sys-surface-container-lowest: #fffef8;
+  --mat-sys-surface-container-low: #fcf8e9;
+  --mat-sys-surface-container: #eee8d3;
+  --mat-sys-surface-container-high: #e7e0ca;
+  --mat-sys-surface-container-highest: #ded7c0;
+  --mat-sys-on-surface-variant: #52636a;
+  --mat-sys-outline: #59676b;
+  --mat-sys-outline-variant: #9fa99e;
+  --mat-sys-error: #a43b34;
+  --mat-sys-on-error: #fffdf3;
 }
 
 body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
   color-scheme: light;
-
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
+  background-color: var(--pixel-paper);
+  background-image:
+    linear-gradient(rgba(32, 49, 60, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(32, 49, 60, 0.035) 1px, transparent 1px);
+  background-size: 24px 24px;
   color: var(--mat-sys-on-surface);
   font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
   margin: 0;
   height: 100%;
 }
 
+
+h1,
+h2,
+h3,
+.mat-mdc-card-title,
+.mat-mdc-dialog-title {
+  font-family: 'Press Start 2P', 'Courier New', monospace !important;
+  font-weight: 400 !important;
+  line-height: 1.7 !important;
+  letter-spacing: 0 !important;
+}
+
+h1 { font-size: 16px !important; }
+h2,
+.mat-mdc-card-title { font-size: 12px !important; }
+h3 { font-size: 10px !important; }
+
+.mat-mdc-card {
+  border: 2px solid var(--pixel-ink) !important;
+  border-radius: 0 !important;
+  background: var(--pixel-panel) !important;
+  box-shadow: 4px 4px 0 rgba(32, 49, 60, 0.22) !important;
+}
+
+.mat-mdc-card-header { padding-bottom: 4px; }
+
+.mat-mdc-card-subtitle {
+  color: var(--mat-sys-on-surface-variant) !important;
+  font-size: 12px !important;
+}
+
+.mat-mdc-button,
+.mat-mdc-outlined-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-raised-button {
+  min-height: 40px;
+  border-radius: 0 !important;
+  font-family: 'IBM Plex Mono', monospace !important;
+  font-weight: 700 !important;
+}
+
+.mat-mdc-outlined-button {
+  border: 2px solid var(--pixel-ink) !important;
+  background: var(--pixel-panel);
+}
+
+.mat-mdc-unelevated-button,
+.mat-mdc-raised-button {
+  border: 2px solid var(--pixel-ink) !important;
+  box-shadow: 3px 3px 0 rgba(32, 49, 60, 0.35) !important;
+}
+
+.mat-mdc-icon-button { border-radius: 0 !important; }
+
+.mat-mdc-form-field .mdc-notched-outline__leading,
+.mat-mdc-form-field .mdc-notched-outline__notch,
+.mat-mdc-form-field .mdc-notched-outline__trailing {
+  border-radius: 0 !important;
+  border-width: 2px !important;
+}
+
+.mat-mdc-progress-bar {
+  height: 10px !important;
+  border: 2px solid var(--pixel-ink);
+  background: #e2dcc6 !important;
+}
+
+.mat-mdc-progress-bar .mdc-linear-progress__bar-inner {
+  border-width: 0 0 6px !important;
+  border-color: var(--pixel-teal) !important;
+}
+
+.mat-mdc-progress-bar .mdc-linear-progress__buffer-bar {
+  background: #e2dcc6 !important;
+}
+
+.mat-mdc-chip,
+.mat-mdc-standard-chip {
+  border-radius: 0 !important;
+  border: 1px solid var(--pixel-ink) !important;
+}
+
+.mat-mdc-table { background: transparent !important; }
+.mat-mdc-header-row { background: #e9e2cc !important; }
+
+.mat-mdc-header-cell {
+  color: var(--pixel-ink) !important;
+  font-family: 'IBM Plex Mono', monospace !important;
+  font-weight: 700 !important;
+}
+
+.mat-mdc-row:hover { background: #f3e7bd !important; }
+
+:focus-visible {
+  outline: 3px solid var(--pixel-coral) !important;
+  outline-offset: 2px;
+}
 
 /* ---------- Application-wide layout helpers ---------- */
 .page-header {
@@ -131,25 +253,27 @@ tr.clickable-row {
   min-width: 32px;
   height: 28px;
   padding: 0 8px;
-  border-radius: 14px;
-  font-weight: 500;
-  background: var(--mat-sys-surface-container-highest);
+  border: 2px solid var(--pixel-ink);
+  border-radius: 0;
+  font-weight: 700;
+  background: #eee8d3;
 
-  &.score-0, &.score-1 { background: #ffdad6; color: #8c1d18; }
-  &.score-2 { background: #ffe0b2; color: #7a4100; }
-  &.score-3 { background: #fff3c4; color: #5c4b00; }
-  &.score-4, &.score-5 { background: #c8f2cf; color: #0f5223; }
+  &.score-0, &.score-1 { background: #f7c9bd; color: #702d28; }
+  &.score-2 { background: #f6d7a5; color: #674300; }
+  &.score-3 { background: #f8e7a9; color: #544400; }
+  &.score-4, &.score-5 { background: #b9e9dc; color: #124a42; }
 }
 
 .status-chip {
   display: inline-block;
   padding: 2px 10px;
-  border-radius: 12px;
+  border: 1px solid var(--pixel-ink);
+  border-radius: 0;
   font: var(--mat-sys-label-medium);
   background: var(--mat-sys-secondary-container);
   color: var(--mat-sys-on-secondary-container);
 
-  &.Completed { background: #c8f2cf; color: #0f5223; }
+  &.Completed { background: #b9e9dc; color: #124a42; }
   &.NotStarted, &.Retired { background: var(--mat-sys-surface-container-highest); color: var(--mat-sys-on-surface-variant); }
 }
 
@@ -200,6 +324,25 @@ a.danger {
   }
 }
 
+.page-header h1 {
+  color: var(--pixel-ink);
+  text-shadow: 2px 2px 0 #e7b83f;
+}
+
+.empty-state {
+  border: 2px dashed var(--mat-sys-outline-variant);
+  background: #fcf8e9;
+}
+
+.summary-row { border-radius: 0 !important; }
+
+.summary-row:hover,
+.summary-row:focus-visible {
+  background: #f3e7bd !important;
+  outline: 2px solid var(--pixel-ink);
+  outline-offset: -2px;
+}
+
 .actions-cell {
   text-align: right !important;
   white-space: nowrap;
@@ -233,4 +376,18 @@ a.danger {
 
 .score-label {
   margin-left: 8px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .content > * {
+    animation: pixel-enter 180ms steps(3, end) both;
+  }
+
+  .content > *:nth-child(2) { animation-delay: 35ms; }
+  .content > *:nth-child(3) { animation-delay: 70ms; }
+}
+
+@keyframes pixel-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }

@@ -3,41 +3,54 @@
 }
 
 .sidenav {
-  width: 260px;
-  border-right: 1px solid var(--mat-sys-outline-variant);
+  width: 264px;
+  border-right: 3px solid var(--pixel-ink);
+  background: #eee8d3;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
-  height: 64px;
-  padding: 0 20px;
-  font: var(--mat-sys-title-large);
-  color: var(--mat-sys-primary);
+  gap: 10px;
+  min-height: 80px;
+  padding: 8px 16px;
+  color: var(--pixel-ink);
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  font-size: 10px;
+  line-height: 1.8;
 }
 
 .brand-icon {
-  font-size: 32px;
-  width: 32px;
-  height: 32px;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--pixel-ink);
+  background: #f6d7a5;
+  color: #9a4b39;
+  font-size: 26px;
 }
 
 .toolbar {
   position: sticky;
   top: 0;
   z-index: 2;
-  background: var(--mat-sys-surface-container);
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  background: #fffdf3;
+  border-bottom: 3px solid var(--pixel-ink);
+  box-shadow: 0 3px 0 rgba(32, 49, 60, 0.12);
 }
 
 .toolbar-title {
-  font: var(--mat-sys-title-medium);
+  color: var(--pixel-teal);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
   margin-left: 8px;
 }
 
 .content {
-  padding: 24px;
+  padding: 28px;
   max-width: 1400px;
   margin: 0 auto;
   box-sizing: border-box;
@@ -45,6 +58,14 @@
 
 @media (max-width: 599px) {
   .content {
-    padding: 12px;
+    padding: 16px 12px 24px;
+  }
+
+  .sidenav {
+    width: min(280px, 84vw);
+  }
+
+  .brand {
+    min-height: 68px;
   }
 }
