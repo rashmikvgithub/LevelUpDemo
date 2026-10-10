@@ -1,0 +1,21 @@
+# .NET build outputs
+**/bin/
+**/obj/
+
+# Node / Angular
+node_modules/
+**/dist/
+**/.angular/
+**/.sass-cache/
+
+# IDE / local editor files
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# OS files
+.DS_Store
+Thumbs.db
