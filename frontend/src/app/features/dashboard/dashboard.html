@@ -148,7 +148,7 @@
         <div class="empty-state">
           <mat-icon>playlist_add</mat-icon>
           <p>No activities tracked on this day.</p>
-          <a mat-flat-button routerLink="/activities">Add an activity</a>
+          <button mat-flat-button type="button" (click)="addActivity()">Add an activity</button>
         </div>
       } @else {
         <ul class="summary-list" role="list">
@@ -187,7 +187,7 @@
         <div class="empty-state">
           <mat-icon>flag</mat-icon>
           <p>No goals yet.</p>
-          <a mat-flat-button routerLink="/goals">Create a goal</a>
+          <button mat-flat-button type="button" (click)="addGoal()">Create a goal</button>
         </div>
       } @else {
         <ul class="summary-list" role="list">

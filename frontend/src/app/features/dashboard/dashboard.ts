@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -22,6 +23,8 @@ import { GoalService } from '../../core/services/goal.service';
 import { addDays, startOfToday, toIsoDate } from '../../core/utils/date.utils';
 import { LineChart, LineSeries } from '../../shared/components/line-chart';
 import { DialogLauncher } from '../../shared/dialogs/dialog-launcher.service';
+import { ActivityFormDialog } from '../activities/activity-form-dialog';
+import { GoalFormDialog } from '../goals/goal-form-dialog';
 
 @Component({
   selector: 'app-dashboard',
@@ -50,6 +53,7 @@ export class Dashboard {
   private readonly activityService = inject(ActivityService);
   private readonly goalService = inject(GoalService);
   private readonly dialogs = inject(DialogLauncher);
+  private readonly dialog = inject(MatDialog);
 
   protected readonly scoreLabels = SCORE_LABELS;
   protected readonly goalStatusLabels = GOAL_STATUS_LABELS;
@@ -120,6 +124,20 @@ export class Dashboard {
   protected logProgress(goal: Goal): void {
     this.dialogs
       .logGoalProgress({ goalId: goal.id, title: goal.title, currentProgress: goal.progressPercentage })
+      .subscribe((saved) => saved && this.refreshAll());
+  }
+
+  protected addActivity(): void {
+    this.dialog
+      .open(ActivityFormDialog, { data: null, width: '520px', maxWidth: '95vw' })
+      .afterClosed()
+      .subscribe((saved) => saved && this.refreshAll());
+  }
+
+  protected addGoal(): void {
+    this.dialog
+      .open(GoalFormDialog, { data: null, width: '520px', maxWidth: '95vw' })
+      .afterClosed()
       .subscribe((saved) => saved && this.refreshAll());
   }
 
