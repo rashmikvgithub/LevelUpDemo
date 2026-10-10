@@ -1,0 +1,86 @@
+<div class="page-header">
+  <div>
+    <h1>Goals</h1>
+    <p class="subtitle">Long-term personal and professional goals &mdash; log progress checkpoints as you go.</p>
+  </div>
+  <div class="actions">
+    <button mat-flat-button type="button" (click)="add()"><mat-icon>add</mat-icon> New goal</button>
+  </div>
+</div>
+
+<form [formGroup]="filters" class="filters" aria-label="Goal filters" style="margin-bottom: 16px">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Search</mat-label>
+    <mat-icon matIconPrefix>search</mat-icon>
+    <input matInput formControlName="search" placeholder="Title or description" />
+  </mat-form-field>
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Status</mat-label>
+    <mat-select formControlName="status">
+      <mat-option value="">All</mat-option>
+      @for (s of statuses; track s) {
+        <mat-option [value]="s">{{ statusLabels[s] }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</form>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" class="loading-bar" />
+}
+
+@if (!loading() && goals().length === 0) {
+  <mat-card appearance="outlined">
+    <div class="empty-state">
+      <mat-icon>flag</mat-icon>
+      <p>No goals found. Create one to start tracking your progress.</p>
+      <button mat-flat-button type="button" (click)="add()">New goal</button>
+    </div>
+  </mat-card>
+}
+
+<div class="card-grid">
+  @for (g of goals(); track g.id) {
+    <mat-card appearance="outlined" class="goal-card">
+      <mat-card-header>
+        <mat-card-title><a [routerLink]="['/goals', g.id]">{{ g.title }}</a></mat-card-title>
+        <mat-card-subtitle><span class="status-chip {{ g.status }}">{{ statusLabels[g.status] }}</span></mat-card-subtitle>
+        <button mat-icon-button type="button" [matMenuTriggerFor]="menu" style="margin-left: auto" [attr.aria-label]="'More actions for ' + g.title">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <a mat-menu-item [routerLink]="['/goals', g.id]"><mat-icon>visibility</mat-icon> Details</a>
+          <button mat-menu-item type="button" (click)="edit(g)"><mat-icon>edit</mat-icon> Edit</button>
+          @if (g.status !== 'Completed') {
+            <button mat-menu-item type="button" (click)="complete(g)"><mat-icon>task_alt</mat-icon> Mark completed</button>
+          }
+          <button mat-menu-item type="button" (click)="remove(g)"><mat-icon>delete</mat-icon> Delete</button>
+        </mat-menu>
+      </mat-card-header>
+      <mat-card-content>
+        @if (g.description) {
+          <p class="description muted">{{ g.description }}</p>
+        }
+        <div class="progress-row">
+          <mat-progress-bar mode="determinate" [value]="g.progressPercentage" />
+          <span class="pct">{{ g.progressPercentage }}%</span>
+        </div>
+        <div class="meta muted">
+          @if (g.targetDate) {
+            <span><mat-icon inline>event</mat-icon> Target {{ g.targetDate | date: 'mediumDate' }}</span>
+          }
+          <span><mat-icon inline>timeline</mat-icon> {{ g.checkpointCount }} checkpoint(s)</span>
+          @if (g.lastCheckpointDate) {
+            <span>Last update {{ g.lastCheckpointDate | date: 'mediumDate' }}</span>
+          }
+          @if (g.completedDate) {
+            <span><mat-icon inline>emoji_events</mat-icon> Completed {{ g.completedDate | date: 'mediumDate' }}</span>
+          }
+        </div>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-button type="button" (click)="logProgress(g)"><mat-icon>add_chart</mat-icon> Log progress</button>
+      </mat-card-actions>
+    </mat-card>
+  }
+</div>

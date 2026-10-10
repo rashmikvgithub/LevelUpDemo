@@ -1,0 +1,115 @@
+@if (loading() && !activity()) {
+  <mat-progress-bar mode="indeterminate" class="loading-bar" />
+}
+
+@if (activity(); as a) {
+  <div class="page-header">
+    <div>
+      <a mat-button routerLink="/activities" class="back"><mat-icon>arrow_back</mat-icon> Activities</a>
+      <h1>{{ a.title }} <span class="status-chip {{ a.status }}">{{ a.status }}</span></h1>
+      @if (a.description) {
+        <p class="subtitle">{{ a.description }}</p>
+      }
+    </div>
+    <div class="actions">
+      <button mat-flat-button type="button" (click)="grade()"><mat-icon>star_rate</mat-icon> Grade a day</button>
+      <button mat-stroked-button type="button" (click)="edit()"><mat-icon>edit</mat-icon> Edit</button>
+      <button mat-button class="danger" type="button" (click)="remove()"><mat-icon>delete</mat-icon> Delete</button>
+    </div>
+  </div>
+
+  <section class="stat-row" aria-label="Activity statistics">
+    <mat-card appearance="outlined"><mat-card-content>
+      <div class="muted">Added</div><div class="stat">{{ a.startDate | date: 'mediumDate' }}</div>
+    </mat-card-content></mat-card>
+    <mat-card appearance="outlined"><mat-card-content>
+      <div class="muted">Days graded</div><div class="stat">{{ stats().count }}</div>
+    </mat-card-content></mat-card>
+    <mat-card appearance="outlined"><mat-card-content>
+      <div class="muted">Average score</div><div class="stat">{{ stats().avg === null ? '-' : (stats().avg | number: '1.1-1') }}</div>
+    </mat-card-content></mat-card>
+    <mat-card appearance="outlined"><mat-card-content>
+      <div class="muted">Current streak</div><div class="stat">{{ stats().streak }} <small>days</small></div>
+    </mat-card-content></mat-card>
+    <mat-card appearance="outlined"><mat-card-content>
+      <div class="muted">Skipped</div><div class="stat">{{ stats().skipped }}</div>
+    </mat-card-content></mat-card>
+  </section>
+
+  <mat-card appearance="outlined" class="section-card">
+    <mat-card-header><mat-card-title>Last 30 days</mat-card-title></mat-card-header>
+    <mat-card-content>
+      <app-line-chart [labels]="chart().labels" [series]="chart().series" [yMax]="5" yLabel="Score" [height]="240" />
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card appearance="outlined" class="section-card">
+    <mat-tab-group>
+      <mat-tab label="Daily grades ({{ scores().length }})">
+        <div class="table-wrapper">
+          <table mat-table [dataSource]="scores()" aria-label="Daily grades">
+            <ng-container matColumnDef="evaluationDate">
+              <th mat-header-cell *matHeaderCellDef>Date</th>
+              <td mat-cell *matCellDef="let s">{{ s.evaluationDate | date: 'EEE, MMM d, y' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="score">
+              <th mat-header-cell *matHeaderCellDef>Score</th>
+              <td mat-cell *matCellDef="let s">
+                <span class="score-chip score-{{ s.score }}">{{ s.score }}</span>
+                <span class="muted score-label">{{ scoreLabels[s.score] }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="notes">
+              <th mat-header-cell *matHeaderCellDef>Notes</th>
+              <td mat-cell *matCellDef="let s">{{ s.notes || '-' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef class="actions-cell"><span class="cdk-visually-hidden">Actions</span></th>
+              <td mat-cell *matCellDef="let s" class="actions-cell">
+                <button mat-icon-button type="button" (click)="grade(s.evaluationDate)" matTooltip="Edit grade" aria-label="Edit grade">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button type="button" (click)="deleteScore(s)" matTooltip="Delete grade" aria-label="Delete grade">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="scoreColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: scoreColumns"></tr>
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell" [attr.colspan]="scoreColumns.length">
+                <div class="empty-state"><mat-icon>star_outline</mat-icon><p>No grades yet.</p></div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Ideas shown ({{ history().length }})">
+        <div class="table-wrapper">
+          <table mat-table [dataSource]="history()" aria-label="Recommendation history">
+            <ng-container matColumnDef="shownDate">
+              <th mat-header-cell *matHeaderCellDef>When</th>
+              <td mat-cell *matCellDef="let h">{{ h.shownDate | date: 'medium' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="text">
+              <th mat-header-cell *matHeaderCellDef>Recommendation</th>
+              <td mat-cell *matCellDef="let h">{{ h.text }}</td>
+            </ng-container>
+            <ng-container matColumnDef="trigger">
+              <th mat-header-cell *matHeaderCellDef>Trigger</th>
+              <td mat-cell *matCellDef="let h">{{ h.trigger === 'LowScorePrompt' ? 'Low-score prompt' : 'Help Me!' }}</td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="historyColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: historyColumns"></tr>
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell" [attr.colspan]="historyColumns.length">
+                <div class="empty-state"><mat-icon>tips_and_updates</mat-icon><p>No ideas requested yet.</p></div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card>
+}

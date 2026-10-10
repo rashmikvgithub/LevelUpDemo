@@ -1,0 +1,114 @@
+<div class="page-header">
+  <div>
+    <h1>My Daily Activities</h1>
+    <p class="subtitle">Things you want to do every day &mdash; grade yourself 0 to 5 each day.</p>
+  </div>
+  <div class="actions">
+    <button mat-flat-button type="button" (click)="add()"><mat-icon>add</mat-icon> Add activity</button>
+  </div>
+</div>
+
+<mat-card appearance="outlined" class="stack">
+  <mat-card-content>
+    <form [formGroup]="filters" class="filters" aria-label="Activity filters">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Search</mat-label>
+        <mat-icon matIconPrefix>search</mat-icon>
+        <input matInput formControlName="search" placeholder="Title or description" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status">
+          <mat-option value="">All</mat-option>
+          <mat-option value="Active">Active</mat-option>
+          <mat-option value="Retired">Retired</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Date added</mat-label>
+        <mat-date-range-input [rangePicker]="addedPicker">
+          <input matStartDate formControlName="addedFrom" placeholder="From" />
+          <input matEndDate formControlName="addedTo" placeholder="To" />
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="addedPicker" />
+        <mat-date-range-picker #addedPicker />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Date retired</mat-label>
+        <mat-date-range-input [rangePicker]="retiredPicker">
+          <input matStartDate formControlName="retiredFrom" placeholder="From" />
+          <input matEndDate formControlName="retiredTo" placeholder="To" />
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="retiredPicker" />
+        <mat-date-range-picker #retiredPicker />
+      </mat-form-field>
+
+      <button mat-button type="button" (click)="clearFilters()"><mat-icon>filter_alt_off</mat-icon> Clear</button>
+    </form>
+  </mat-card-content>
+</mat-card>
+
+<mat-card appearance="outlined" style="margin-top: 16px">
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+  <div class="table-wrapper">
+    <table mat-table [dataSource]="activities()" aria-label="Activities">
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef>Activity</th>
+        <td mat-cell *matCellDef="let a">
+          <a [routerLink]="['/activities', a.id]" (click)="$event.stopPropagation()"><strong>{{ a.title }}</strong></a>
+          @if (a.description) {
+            <div class="muted">{{ a.description }}</div>
+          }
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let a"><span class="status-chip {{ a.status }}">{{ a.status }}</span></td>
+      </ng-container>
+
+      <ng-container matColumnDef="startDate">
+        <th mat-header-cell *matHeaderCellDef>Added</th>
+        <td mat-cell *matCellDef="let a">{{ a.startDate | date: 'mediumDate' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="retiredDate">
+        <th mat-header-cell *matHeaderCellDef>Retired</th>
+        <td mat-cell *matCellDef="let a">{{ a.retiredDate ? (a.retiredDate | date: 'mediumDate') : '-' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="actions-cell"><span class="cdk-visually-hidden">Actions</span></th>
+        <td mat-cell *matCellDef="let a" class="actions-cell" (click)="$event.stopPropagation()">
+          <button mat-icon-button type="button" (click)="grade(a)" matTooltip="Grade today" [attr.aria-label]="'Grade ' + a.title">
+            <mat-icon>star_rate</mat-icon>
+          </button>
+          <button mat-icon-button type="button" [matMenuTriggerFor]="menu" [attr.aria-label]="'More actions for ' + a.title">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item type="button" (click)="open(a)"><mat-icon>visibility</mat-icon> Details</button>
+            <button mat-menu-item type="button" (click)="edit(a)"><mat-icon>edit</mat-icon> Edit</button>
+            <button mat-menu-item type="button" (click)="remove(a)"><mat-icon>delete</mat-icon> Delete</button>
+          </mat-menu>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns" class="clickable-row" (click)="open(row)"></tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="columns.length">
+          <div class="empty-state">
+            <mat-icon>checklist</mat-icon>
+            <p>No activities match. Add one to start tracking!</p>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</mat-card>

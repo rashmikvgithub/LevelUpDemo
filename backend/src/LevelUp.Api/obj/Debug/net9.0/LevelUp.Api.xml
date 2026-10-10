@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LevelUp.Api</name>
+    </assembly>
+    <members>
+        <member name="T:LevelUp.Api.Controllers.ActivitiesController">
+            <summary>Daily activities and their self-evaluation scores.</summary>
+        </member>
+        <member name="M:LevelUp.Api.Controllers.ActivitiesController.#ctor(LevelUp.Application.Activities.IActivityService)">
+            <summary>Daily activities and their self-evaluation scores.</summary>
+        </member>
+        <member name="M:LevelUp.Api.Controllers.ActivitiesController.Search(LevelUp.Application.Activities.ActivityQuery,System.Threading.CancellationToken)">
+            <summary>Searches activities by text, status, date added and date retired.</summary>
+        </member>
+        <member name="M:LevelUp.Api.Controllers.ActivitiesController.GetDaily(System.DateOnly,System.Threading.CancellationToken)">
+            <summary>Gets all activities tracked on a day together with that day's grade (if any).</summary>
+        </member>
+        <member name="M:LevelUp.Api.Controllers.ActivitiesController.Delete(System.Int32,System.Threading.CancellationToken)">
+            <summary>Deletes an activity and all of its scores.</summary>
+        </member>
+        <member name="M:LevelUp.Api.Controllers.ActivitiesController.GetScores(System.Int32,System.Nullable{System.DateOnly},System.Nullable{System.DateOnly},System.Threading.CancellationToken)">
+            <summary>Lists the grades recorded for an activity (newest first).</summary>
+        </member>
+        <member name="M:LevelUp.Api.Controllers.ActivitiesController.SaveScore(System.Int32,LevelUp.Application.Activities.SaveActivityScoreRequest,System.Threading.CancellationToken)">
+            <summary>Creates or updates the grade (0-5) for an activity on a given date.</summary>
+        </member>
+        <member name="T:LevelUp.Api.Controllers.DashboardController">
+            <summary>Aggregated scores, goal statistics and trend data for the dashboard.</summary>
+        </member>
+        <member name="M:LevelUp.Api.Controllers.DashboardController.#ctor(LevelUp.Application.Dashboard.IDashboardService)">
+            <summary>Aggregated scores, goal statistics and trend data for the dashboard.</summary>
+        </member>
+        <member name="M:LevelUp.Api.Controllers.DashboardController.GetSummary(System.Nullable{System.DateOnly},System.Threading.CancellationToken)">
+            <summary>Today's / weekly / monthly score plus goal counts.</summary>
+            <param name="date">Reference day (defaults to the server's today).</param>
+            <param name="ct">Cancellation token.</param>
+        </member>
+        <member name="M:LevelUp.Api.Controllers.DashboardController.GetTrends(LevelUp.Application.Dashboard.TrendPeriod,System.Nullable{System.DateOnly},System.Threading.CancellationToken)">
+            <summary>
+            Trend lines for activities (sum of scores per bucket) and goals (progress % at bucket end).
+            Daily = last 30 days, Weekly = last 12 weeks, Monthly = last 12 months, Annual = last 5 years.
+            </summary>
+        </member>
+        <member name="T:LevelUp.Api.Controllers.GoalsController">
+            <summary>Long-term goals and their progress checkpoints.</summary>
+        </member>
+        <member name="M:LevelUp.Api.Controllers.GoalsController.#ctor(LevelUp.Application.Goals.IGoalService)">
+            <summary>Long-term goals and their progress checkpoints.</summary>
+        </member>
+        <member name="M:LevelUp.Api.Controllers.GoalsController.GetGoal(System.Int32,System.Threading.CancellationToken)">
+            <summary>Gets a goal including its full checkpoint history.</summary>
+        </member>
+        <member name="M:LevelUp.Api.Controllers.GoalsController.Complete(System.Int32,LevelUp.Application.Goals.CompleteGoalRequest,System.Threading.CancellationToken)">
+            <summary>Marks the goal as completed by logging a 100% checkpoint.</summary>
+        </member>
+        <member name="M:LevelUp.Api.Controllers.GoalsController.AddCheckpoint(System.Int32,LevelUp.Application.Goals.CreateGoalCheckpointRequest,System.Threading.CancellationToken)">
+            <summary>Logs a progress checkpoint (percent complete + note) for a goal.</summary>
+        </member>
+        <member name="T:LevelUp.Api.Controllers.RecommendationsController">
+            <summary>Stored recommendations, the "Help Me!" suggestion endpoint and recommendation history.</summary>
+        </member>
+        <member name="M:LevelUp.Api.Controllers.RecommendationsController.#ctor(LevelUp.Application.Recommendations.IRecommendationService)">
+            <summary>Stored recommendations, the "Help Me!" suggestion endpoint and recommendation history.</summary>
+        </member>
+        <member name="M:LevelUp.Api.Controllers.RecommendationsController.Suggest(LevelUp.Application.Recommendations.RecommendationRequest,System.Threading.CancellationToken)">
+            <summary>"Help Me!" - returns a suggestion for the given context and records it in history.</summary>
+        </member>
+        <member name="M:LevelUp.Api.Controllers.RecommendationsController.History(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Int32,System.Threading.CancellationToken)">
+            <summary>Recommendation history, optionally filtered by activity or goal.</summary>
+        </member>
+        <member name="T:LevelUp.Api.Middleware.GlobalExceptionHandler">
+            <summary>
+            Converts unhandled exceptions into RFC 7807 problem details responses.
+            </summary>
+        </member>
+        <member name="M:LevelUp.Api.Middleware.GlobalExceptionHandler.#ctor(Microsoft.AspNetCore.Http.IProblemDetailsService,Microsoft.Extensions.Logging.ILogger{LevelUp.Api.Middleware.GlobalExceptionHandler},Microsoft.Extensions.Hosting.IHostEnvironment)">
+            <summary>
+            Converts unhandled exceptions into RFC 7807 problem details responses.
+            </summary>
+        </member>
+        <member name="T:LevelUp.Api.Services.CurrentUserService">
+            <summary>
+            Resolves the current user from the HTTP context. Falls back to "system" until authentication is added.
+            </summary>
+        </member>
+        <member name="M:LevelUp.Api.Services.CurrentUserService.#ctor(Microsoft.AspNetCore.Http.IHttpContextAccessor)">
+            <summary>
+            Resolves the current user from the HTTP context. Falls back to "system" until authentication is added.
+            </summary>
+        </member>
+    </members>
+</doc>

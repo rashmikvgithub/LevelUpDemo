@@ -1,0 +1,235 @@
+Create a complete enterprise-grade application named "Level Up My life".
+
+Project Purpose:
+Level-UP is a personal growth and productivity application that helps users track daily activities, assess their own daily performance on each activity, manage long-term goals by inputting progress checkpoints, and receive recommendations when they want them.
+
+Technology Stack
+---------------
+Backend:
+- ASP.NET Core 9 Web API
+- Entity Framework Core Latest Version
+- SQL Server
+- Swagger
+
+Frontend:
+- Angular Latest Stable Version
+- Angular Material
+
+Architecture
+------------
+- Clean Architecture
+- Repository Pattern
+- Dependency Injection
+- DTO Pattern
+- Service Layer
+- Fluent Validation
+- Global Exception Handling
+- Async/Await throughout application
+
+Project Location
+----------------
+C:\Users\rashmi.kvudeda\OneDrive - Ascend Learning\LevelUp
+
+Core Modules
+============
+
+1. My Daily Activities
+
+Purpose:
+Allow user to track activities performed during the day.
+
+Activity:
+- Add Activity
+- Edit Activity
+- Delete Activity
+- View Daily Activities
+- Search Activities
+- Filter by Date added/retired
+
+Daily Activity Evaluations/Grades
+For each activity, you can grade yourself daily.
+examples: "exercise", "read 10 pages of a book", "eat well", "enter time in timesheet"
+Fields:
+- Activity Id
+- Title
+- Description
+- Evaluation Date
+- Score (0 through 5 (integer) (0 means skip/fail))
+- Notes (optional)
+
+
+2. Goals (Other Menu)
+
+Purpose:
+Manage future personal and professional long-term goals (these won't be graded, you can just click on a goal and enter an update, including "note", and "% complete", and this will be logged).
+examples: "lose 10 lbs", "get ai certification", "2 family vacations this year", "learn python"
+Features:
+- Create Goal
+- Edit Goal
+- Delete Goal
+- Mark Completed
+- Track Progress (each progress checkpoint will have it's own row in a table)
+
+Goal Fields:
+- Goal Id
+- Title
+- Description
+- Target Date
+- Progress Percentage (could be pulled from latest progress tracking/checkpoint entry)
+- Status
+  - Not Started (0%)
+  - In Progress (1-99%)
+  - Completed (may be able to be derived from progress tracking/checkpoint table 100%)
+
+Dashboard
+=========
+
+Provide a dashboard showing:
+
+- Today's Score
+- Weekly Score
+- Monthly Score
+- Active Goals
+- Goal Completion Count
+- progress tracking/checkpoint Trend Chart
+
+Recommendation Engine
+========================
+
+In the same place where you grade/evaluate yourself on your daily activities:
+Have a "help me" or "ideas?" button, that will show a random suggestion on how to do better at completing your daily activities:
+some hard-coded (stored in db) recommendations such as:
+- Reschedule activity to a better time
+- Break activity into smaller tasks
+- Set reminders
+- Reduce task complexity
+- Improve consistency
+
+note:
+potential future-scope:
+replace random hard-coded suggestions with ai/llm generated suggestions (keep UI same)
+If an activity repeatedly receives low scores or is skipped multiple times, show a pop-up asking if they want help or a suggestion/idea on how to do better
+
+Store recommendation history.
+
+Database Entities
+=================
+
+Create SQL Server tables for:
+
+- Activity
+  activity id
+  title
+  description
+  status (active, retired)
+
+- ActivityScores
+  - Activity Id
+  - Title
+  - Description
+  - Status
+  - Score (0 through 5 (integer))
+  - Notes
+  - Created Date
+- Goal
+  goal id
+  title
+  description
+- GoalCheckpoints
+  GoalCheckpointID
+  goal id (fk)
+  percent complete
+  note
+- Recommendations
+  recommendation id
+  recommendation text
+
+Include:
+- Primary Keys
+- Foreign Keys
+- Audit Fields
+  - CreatedBy
+  - CreatedDate
+  - ModifiedBy
+  - ModifiedDate
+
+API Requirements
+================
+
+Generate:
+- Controllers
+- Services
+- Repositories
+- DTOs
+- Validators
+- EF Core Configurations
+- Migrations
+
+Create full CRUD APIs for:
+- Activities
+- Goals
+- Dashboard
+- Recommendations
+
+Frontend Requirements
+=====================
+
+Angular Pages:
+
+1. Dashboard
+  "trends" (daily, weekly, monthly, annual)
+    line graphs
+      goals
+        all goals (sum)
+        option to show individual goal trend-line
+      daily activities
+        all (sum)
+        option to show individual activity trend-line
+    activities summary list (with scores, or '-' if not graded/evaluated yet for today)
+      show today by default
+      option to select different day
+      clicking activity row launches daily evaluation pop-up for that activity
+    goals summary list
+      shows current progress % for each goal
+      clicking a goal launches progress checkpoint entry pop-up for that goal
+2. Activity Details
+  add activities
+  edit activities
+  launch daily update pop-up
+4. Goal Details
+
+popup pages:
+grade a daily activity
+  enter a 0-5 score for yourself for a given activity for today
+    should allow you to go back and score a day you missed in the past
+  "Help Me!" button
+    shows a random recommendation for how to improve your likelyhood of success/remembering activity tomorrow
+enter goal progress checkpoint
+  enter a % progress update checkpoint (including a note) for a given goal
+  "Help Me!" button
+    shows a random recommendation for how to better accomplish this goal
+
+UI Requirements:
+- Modern responsive design
+- Angular Material
+- Card-based layout
+- Charts for productivity
+- Progress bars
+- Mobile friendly
+
+Output
+======
+
+Generate the complete solution structure including:
+
+- Backend Folder Structure
+- Frontend Folder Structure
+- SQL Schema
+- EF Core Models
+- API Controllers
+- Services
+- Angular Components
+- Angular Services
+- Sample Dashboard UI
+
+Follow production-ready coding standards and best practices.

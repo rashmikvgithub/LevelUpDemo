@@ -1,0 +1,217 @@
+<div class="page-header">
+  <div>
+    <h1>Dashboard</h1>
+    <p class="subtitle">{{ today | date: 'fullDate' }} &middot; keep leveling up!</p>
+  </div>
+  <div class="actions">
+    <a mat-stroked-button routerLink="/activities"><mat-icon>checklist</mat-icon> Activities</a>
+    <a mat-stroked-button routerLink="/goals"><mat-icon>flag</mat-icon> Goals</a>
+  </div>
+</div>
+
+@if (loading() && !summary()) {
+  <mat-progress-bar mode="indeterminate" class="loading-bar" />
+}
+
+<!-- Summary cards -->
+@if (summary(); as s) {
+  <section class="summary-grid" aria-label="Summary">
+    @for (card of scoreCards(); track card.icon) {
+      <mat-card appearance="outlined" class="stat-card">
+        <mat-card-content>
+          <div class="stat-head">
+            <mat-icon class="stat-icon">{{ card.icon }}</mat-icon>
+            <span class="stat-label">{{ card.label }}</span>
+          </div>
+          <div class="stat-value">{{ card.data.percentage | number: '1.0-0' }}%</div>
+          <mat-progress-bar mode="determinate" [value]="card.data.percentage" />
+          <div class="stat-foot muted">
+            {{ card.data.points }} / {{ card.data.possiblePoints }} pts
+            @if (card.data.averageScore !== null) {
+              &middot; avg {{ card.data.averageScore | number: '1.1-1' }}
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <mat-card appearance="outlined" class="stat-card">
+      <mat-card-content>
+        <div class="stat-head">
+          <mat-icon class="stat-icon">flag</mat-icon>
+          <span class="stat-label">Active goals</span>
+        </div>
+        <div class="stat-value">{{ s.activeGoals }}</div>
+        <mat-progress-bar mode="determinate" [value]="s.averageGoalProgress" />
+        <div class="stat-foot muted">overall goal progress {{ s.averageGoalProgress | number: '1.0-0' }}% &middot; {{ s.notStartedGoals }} not started</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined" class="stat-card">
+      <mat-card-content>
+        <div class="stat-head">
+          <mat-icon class="stat-icon">emoji_events</mat-icon>
+          <span class="stat-label">Goals completed</span>
+        </div>
+        <div class="stat-value">{{ s.completedGoals }}</div>
+        <div class="stat-foot muted">{{ s.activeActivities }} active daily activities</div>
+      </mat-card-content>
+    </mat-card>
+  </section>
+}
+
+<!-- Trends -->
+<mat-card appearance="outlined" class="section-card">
+  <mat-card-header>
+    <mat-card-title>Trends</mat-card-title>
+    <mat-card-subtitle>Track how your activities and goals progress over time</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-button-toggle-group
+      class="period-toggle"
+      [value]="period()"
+      (change)="setPeriod($event.value)"
+      aria-label="Trend period"
+    >
+      @for (p of periods; track p) {
+        <mat-button-toggle [value]="p">{{ p }}</mat-button-toggle>
+      }
+    </mat-button-toggle-group>
+
+    @if (trendsLoading()) {
+      <mat-progress-bar mode="indeterminate" class="loading-bar" />
+    }
+
+    @if (trends(); as t) {
+      <div class="trend-grid">
+        <div class="trend">
+          <div class="trend-head">
+            <h3>Daily activities <span class="muted">(score points)</span></h3>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="series-select">
+              <mat-label>Show individual activities</mat-label>
+              <mat-select multiple [ngModel]="selectedActivityIds()" (ngModelChange)="selectedActivityIds.set($event)">
+                @for (a of t.activities; track a.id) {
+                  <mat-option [value]="a.id">{{ a.name }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <app-line-chart [labels]="t.labels" [series]="activityChart()" yLabel="Points" />
+        </div>
+
+        <div class="trend">
+          <div class="trend-head">
+            <h3>Goals <span class="muted">(% progress)</span></h3>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="series-select">
+              <mat-label>Show individual goals</mat-label>
+              <mat-select multiple [ngModel]="selectedGoalIds()" (ngModelChange)="selectedGoalIds.set($event)">
+                @for (g of t.goals; track g.id) {
+                  <mat-option [value]="g.id">{{ g.name }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <app-line-chart [labels]="t.labels" [series]="goalChart()" yLabel="Progress %" />
+        </div>
+      </div>
+    }
+  </mat-card-content>
+</mat-card>
+
+<div class="lists-grid">
+  <!-- Activities summary -->
+  <mat-card appearance="outlined" class="section-card">
+    <mat-card-header>
+      <mat-card-title>Daily activities</mat-card-title>
+      <mat-card-subtitle>{{ gradedCount() }} of {{ dailyActivities().length }} graded &middot; click a row to grade it</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="date-nav">
+        <button mat-icon-button type="button" (click)="shiftDate(-1)" matTooltip="Previous day" aria-label="Previous day">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="date-field">
+          <mat-label>Day</mat-label>
+          <input matInput [matDatepicker]="dayPicker" [max]="today" [ngModel]="selectedDate()" (ngModelChange)="changeDate($event)" />
+          <mat-datepicker-toggle matIconSuffix [for]="dayPicker" />
+          <mat-datepicker #dayPicker />
+        </mat-form-field>
+        <button mat-icon-button type="button" (click)="shiftDate(1)" [disabled]="isToday()" matTooltip="Next day" aria-label="Next day">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+        @if (!isToday()) {
+          <button mat-button type="button" (click)="changeDate(today)">Today</button>
+        }
+      </div>
+
+      @if (dailyActivities().length === 0 && !loading()) {
+        <div class="empty-state">
+          <mat-icon>playlist_add</mat-icon>
+          <p>No activities tracked on this day.</p>
+          <a mat-flat-button routerLink="/activities">Add an activity</a>
+        </div>
+      } @else {
+        <ul class="summary-list" role="list">
+          @for (a of dailyActivities(); track a.activityId) {
+            <li>
+              <button type="button" class="summary-row" (click)="gradeActivity(a)" [attr.aria-label]="'Grade ' + a.title">
+                <span class="row-main">
+                  <span class="row-title">{{ a.title }}</span>
+                  @if (a.notes) {
+                    <span class="row-sub muted">{{ a.notes }}</span>
+                  } @else if (a.description) {
+                    <span class="row-sub muted">{{ a.description }}</span>
+                  }
+                </span>
+                @if (a.score !== null) {
+                  <span class="score-chip score-{{ a.score }}" [matTooltip]="scoreLabels[a.score]">{{ a.score }}</span>
+                } @else {
+                  <span class="score-chip" matTooltip="Not graded yet">-</span>
+                }
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Goals summary -->
+  <mat-card appearance="outlined" class="section-card">
+    <mat-card-header>
+      <mat-card-title>Goals</mat-card-title>
+      <mat-card-subtitle>Click a goal to log a progress checkpoint</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      @if (goals().length === 0 && !loading()) {
+        <div class="empty-state">
+          <mat-icon>flag</mat-icon>
+          <p>No goals yet.</p>
+          <a mat-flat-button routerLink="/goals">Create a goal</a>
+        </div>
+      } @else {
+        <ul class="summary-list" role="list">
+          @for (g of goals(); track g.id) {
+            <li>
+              <button type="button" class="summary-row goal-row" (click)="logProgress(g)" [attr.aria-label]="'Log progress for ' + g.title">
+                <span class="row-main">
+                  <span class="row-title">
+                    {{ g.title }}
+                    <span class="status-chip {{ g.status }}">{{ goalStatusLabels[g.status] }}</span>
+                  </span>
+                  <span class="progress-row">
+                    <mat-progress-bar mode="determinate" [value]="g.progressPercentage" />
+                    <span class="pct">{{ g.progressPercentage }}%</span>
+                  </span>
+                  @if (g.targetDate) {
+                    <span class="row-sub muted">Target {{ g.targetDate | date: 'mediumDate' }}</span>
+                  }
+                </span>
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,71 @@
+<h2 mat-dialog-title>
+  <mat-icon class="title-icon">grading</mat-icon>
+  Grade: {{ data.title }}
+</h2>
+
+<mat-dialog-content>
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" class="loading-bar" />
+  }
+
+  <form [formGroup]="form" class="dialog-form" (ngSubmit)="save()" id="grade-form">
+    <div class="date-row">
+      <button mat-icon-button type="button" (click)="shiftDay(-1)" [disabled]="!canGoBack()" aria-label="Previous day">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <mat-form-field appearance="outline" class="date-field" subscriptSizing="dynamic">
+        <mat-label>Evaluation date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="date" [min]="minDate()" [max]="maxDate()" />
+        <mat-datepicker-toggle matIconSuffix [for]="picker" />
+        <mat-datepicker #picker />
+        <mat-hint>Missed a day? Pick a past date to grade it.</mat-hint>
+      </mat-form-field>
+      <button mat-icon-button type="button" (click)="shiftDay(1)" [disabled]="!canGoForward()" aria-label="Next day">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+
+    <div class="score-section">
+      <span class="field-label">How did you do? @if (existingScoreId()) { <em>(updating existing grade)</em> }</span>
+      <mat-button-toggle-group formControlName="score" aria-label="Score" class="score-toggle">
+        @for (s of scoreOptions; track s) {
+          <mat-button-toggle [value]="s" [class]="'score-' + s">
+            <span class="score-num">{{ s }}</span>
+            <span class="score-label">{{ scoreLabels[s] }}</span>
+          </mat-button-toggle>
+        }
+      </mat-button-toggle-group>
+      @if (form.controls.score.touched && form.controls.score.invalid) {
+        <mat-error>Please choose a score (0 = skipped).</mat-error>
+      }
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Notes (optional)</mat-label>
+      <textarea matInput formControlName="notes" rows="3" maxlength="1000"></textarea>
+    </mat-form-field>
+  </form>
+
+  @if (helpPrompt(); as reason) {
+    <div class="help-prompt" role="alert">
+      <mat-icon>support</mat-icon>
+      <div>
+        <p>{{ reason }}</p>
+        <p>Would you like an idea on how to do better?</p>
+        <div class="prompt-actions">
+          <button mat-flat-button type="button" (click)="acceptHelp()">Yes, give me an idea</button>
+          <button mat-button type="button" (click)="close()">No thanks</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <app-help-me category="Activity" [activityId]="data.activityId" />
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="close()">{{ saved() ? 'Close' : 'Cancel' }}</button>
+  <button mat-flat-button type="submit" form="grade-form" [disabled]="saving() || loading()">
+    {{ saving() ? 'Saving...' : 'Save' }}
+  </button>
+</mat-dialog-actions>
