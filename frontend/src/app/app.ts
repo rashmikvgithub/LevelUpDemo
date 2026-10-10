@@ -33,7 +33,7 @@ interface NavItem {
 export class App {
   protected readonly navItems: NavItem[] = [
     { path: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
-    { path: '/activities', label: 'My Daily Activities', icon: 'checklist' },
+    { path: '/activities', label: 'Activities', icon: 'checklist' },
     { path: '/goals', label: 'Goals', icon: 'flag' },
     { path: '/recommendations', label: 'Recommendations', icon: 'tips_and_updates' },
   ];
