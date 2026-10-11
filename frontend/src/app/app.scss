@@ -13,7 +13,7 @@
   --mat-list-item-leading-icon-color: #bbf7d0;
   --mat-list-item-selected-label-text-color: #ffffff;
   --mat-list-item-selected-leading-icon-color: #ffffff;
-  --mat-list-item-selected-state-layer-color: #2f7048;
+  --mat-list-item-selected-state-layer-color: #0c7098;
   --mat-list-item-hover-state-layer-color: #ffffff;
 }
 
@@ -49,8 +49,8 @@
   height: auto;
   padding: 8px 28px;
   background: var(--pixel-grass);
-  border-bottom: 3px solid #8fc4a2;
-  box-shadow: 0 3px 0 rgba(5, 46, 22, 0.3);
+  border-bottom: 3px solid #7dd3fc;
+  box-shadow: 0 3px 0 rgba(3, 41, 63, 0.3);
   color: var(--pixel-grass-text);
 }
 
@@ -64,7 +64,7 @@
 }
 
 .sidenav .mdc-list-item--activated {
-  background-color: #2f7048;
+  background-color: #0c7098;
 }
 
 .sidenav .mdc-list-item:not(.mdc-list-item--activated):hover {
@@ -90,7 +90,7 @@
   font-family: 'Silkscreen', monospace;
   font-size: 32px;
   line-height: 1.35;
-  text-shadow: 2px 2px 0 #2f7048;
+  text-shadow: 2px 2px 0 #0c7098;
 }
 
 .content {
