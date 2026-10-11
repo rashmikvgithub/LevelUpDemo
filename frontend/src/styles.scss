@@ -27,6 +27,54 @@ html {
   --pixel-teal: #177b72;
   --pixel-coral: #e76f61;
   --pixel-gold: #e7b83f;
+  --pixel-panel-shape: polygon(
+    0 12px,
+    4px 12px,
+    4px 8px,
+    8px 8px,
+    8px 4px,
+    12px 4px,
+    12px 0,
+    calc(100% - 12px) 0,
+    calc(100% - 12px) 4px,
+    calc(100% - 8px) 4px,
+    calc(100% - 8px) 8px,
+    calc(100% - 4px) 8px,
+    calc(100% - 4px) 12px,
+    100% 12px,
+    100% calc(100% - 12px),
+    calc(100% - 4px) calc(100% - 12px),
+    calc(100% - 4px) calc(100% - 8px),
+    calc(100% - 8px) calc(100% - 8px),
+    calc(100% - 8px) calc(100% - 4px),
+    calc(100% - 12px) calc(100% - 4px),
+    calc(100% - 12px) 100%,
+    12px 100%,
+    12px calc(100% - 4px),
+    8px calc(100% - 4px),
+    8px calc(100% - 8px),
+    4px calc(100% - 8px),
+    4px calc(100% - 12px),
+    0 calc(100% - 12px)
+  );
+  --pixel-right-panel-shape: polygon(
+    0 0,
+    calc(100% - 12px) 0,
+    calc(100% - 12px) 4px,
+    calc(100% - 8px) 4px,
+    calc(100% - 8px) 8px,
+    calc(100% - 4px) 8px,
+    calc(100% - 4px) 12px,
+    100% 12px,
+    100% calc(100% - 12px),
+    calc(100% - 4px) calc(100% - 12px),
+    calc(100% - 4px) calc(100% - 8px),
+    calc(100% - 8px) calc(100% - 8px),
+    calc(100% - 8px) calc(100% - 4px),
+    calc(100% - 12px) calc(100% - 4px),
+    calc(100% - 12px) 100%,
+    0 100%
+  );
   --mat-sys-primary: var(--pixel-teal);
   --mat-sys-on-primary: #fffdf3;
   --mat-sys-primary-container: #b9e9dc;
@@ -92,12 +140,81 @@ h2,
 .mat-mdc-card-title { font-size: 12px !important; }
 h3 { font-size: 10px !important; }
 
-.mat-mdc-card {
-  border: 2px solid var(--pixel-ink) !important;
+:is(
+  .mat-mdc-card,
+  .mat-mdc-dialog-surface,
+  .mat-mdc-menu-panel,
+  .mat-mdc-select-panel,
+  .mat-mdc-autocomplete-panel,
+  .help-prompt
+) {
+  position: relative;
+  isolation: isolate;
+  border: 0 !important;
   border-radius: 0 !important;
-  background: var(--pixel-panel) !important;
+  clip-path: var(--pixel-panel-shape);
+  background: #000 !important;
+  box-shadow: none !important;
+  filter: drop-shadow(4px 4px 0 rgba(0, 0, 0, 0.55));
+}
+
+:is(
+  .mat-mdc-card,
+  .mat-mdc-dialog-surface,
+  .mat-mdc-menu-panel,
+  .mat-mdc-select-panel,
+  .mat-mdc-autocomplete-panel,
+  .help-prompt
+)::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  z-index: 0;
+  clip-path: var(--pixel-panel-shape);
+  background: var(--pixel-surface-fill, var(--pixel-panel));
+  pointer-events: none;
+}
+
+:is(
+  .mat-mdc-card,
+  .mat-mdc-dialog-surface,
+  .mat-mdc-menu-panel,
+  .mat-mdc-select-panel,
+  .mat-mdc-autocomplete-panel,
+  .help-prompt
+) > * {
+  position: relative;
+  z-index: 1;
+}
+
+.mat-mdc-card {
   color: var(--pixel-ink) !important;
-  box-shadow: 4px 4px 0 rgba(32, 49, 60, 0.22) !important;
+}
+
+.help-prompt {
+  --pixel-surface-fill: var(--mat-sys-secondary-container);
+}
+
+.sidenav {
+  isolation: isolate;
+  border: 0 !important;
+  background: #000 !important;
+}
+
+.sidenav::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  z-index: 0;
+  clip-path: var(--pixel-right-panel-shape);
+  background: var(--pixel-grass);
+  pointer-events: none;
+}
+
+.sidenav > .mat-drawer-inner-container {
+  position: relative;
+  z-index: 1;
+  background: transparent;
 }
 
 .mat-mdc-card-header { padding-bottom: 4px; }

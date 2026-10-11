@@ -4,9 +4,11 @@
 
 .sidenav {
   width: 264px;
-  border-right: 3px solid #8fc4a2;
-  background: var(--pixel-grass);
+  border-radius: 0;
+  background: #000;
+  clip-path: var(--pixel-right-panel-shape);
   color: var(--pixel-grass-text);
+  filter: drop-shadow(4px 4px 0 rgba(5, 46, 22, 0.4));
   --mat-list-item-label-text-color: var(--pixel-grass-text);
   --mat-list-item-leading-icon-color: #bbf7d0;
   --mat-list-item-selected-label-text-color: #ffffff;
