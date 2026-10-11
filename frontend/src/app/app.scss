@@ -44,6 +44,15 @@
   box-shadow: 0 3px 0 rgba(32, 49, 60, 0.12);
 }
 
+.toolbar-icon {
+  flex: 0 0 43px;
+  width: 43px;
+  height: 43px;
+  margin-right: 12px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
 .toolbar-title {
   color: var(--pixel-teal);
   font-family: 'Silkscreen', monospace;
@@ -76,6 +85,13 @@
     line-height: 1.25;
     white-space: normal;
     overflow-wrap: anywhere;
+  }
+
+  .toolbar-icon {
+    flex-basis: 28px;
+    width: 28px;
+    height: 28px;
+    margin-right: 8px;
   }
 
   .sidenav {
