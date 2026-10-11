@@ -104,6 +104,22 @@
   text-shadow: 2px 2px 0 #0c7098;
 }
 
+.toolbar-clouds {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: space-evenly;
+  min-width: 0;
+
+  img {
+    display: block;
+    flex: 0 0 auto;
+    width: auto;
+    height: 48px;
+    image-rendering: pixelated;
+  }
+}
+
 .content {
   padding: 28px;
   max-width: 1400px;
@@ -128,6 +144,10 @@
     line-height: 1.25;
     white-space: normal;
     overflow-wrap: anywhere;
+  }
+
+  .toolbar-clouds {
+    display: none;
   }
 
   .toolbar-icon {
