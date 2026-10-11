@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -18,6 +19,7 @@ import { startOfToday, toIsoDate } from '../../core/utils/date.utils';
 import { LineChart, LineSeries } from '../../shared/components/line-chart';
 import { DialogLauncher } from '../../shared/dialogs/dialog-launcher.service';
 import { DailyActivities } from '../daily-activities/daily-activities';
+import { GoalFormDialog } from '../goals/goal-form-dialog';
 
 @Component({
   selector: 'app-dashboard',
@@ -43,6 +45,7 @@ export class Dashboard {
   private readonly dashboardService = inject(DashboardService);
   private readonly goalService = inject(GoalService);
   private readonly dialogs = inject(DialogLauncher);
+  private readonly dialog = inject(MatDialog);
 
   protected readonly goalStatusLabels = GOAL_STATUS_LABELS;
   protected readonly periods: TrendPeriod[] = ['Daily', 'Weekly', 'Monthly', 'Annual'];
@@ -98,6 +101,13 @@ export class Dashboard {
   protected logProgress(goal: Goal): void {
     this.dialogs
       .logGoalProgress({ goalId: goal.id, title: goal.title, currentProgress: goal.progressPercentage })
+      .subscribe((saved) => saved && this.refreshAll());
+  }
+
+  protected addGoal(): void {
+    this.dialog
+      .open(GoalFormDialog, { data: null, width: '520px', maxWidth: '95vw' })
+      .afterClosed()
       .subscribe((saved) => saved && this.refreshAll());
   }
 

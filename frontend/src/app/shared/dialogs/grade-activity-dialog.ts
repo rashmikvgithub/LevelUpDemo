@@ -14,6 +14,7 @@ import { Activity, SCORE_LABELS } from '../../core/models/activity.models';
 import { ActivityService } from '../../core/services/activity.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { addDays, fromIsoDate, startOfToday, toIsoDate } from '../../core/utils/date.utils';
+import { RobotCelebrationService } from '../components/robot-celebration';
 import { HelpMe } from '../components/help-me';
 
 export interface GradeActivityDialogData {
@@ -46,6 +47,7 @@ export class GradeActivityDialog {
   private readonly dialogRef = inject(MatDialogRef<GradeActivityDialog, boolean>);
   private readonly activities = inject(ActivityService);
   private readonly notifications = inject(NotificationService);
+  private readonly celebration = inject(RobotCelebrationService);
 
   private readonly helpMe = viewChild.required(HelpMe);
 
@@ -112,6 +114,7 @@ export class GradeActivityDialog {
       .saveScore(this.data.activityId, { evaluationDate: toIsoDate(date), score: score!, notes: notes || null })
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe((result) => {
+        if (score! >= 1) this.celebration.play();
         this.saved.set(true);
         this.existingScoreId.set(result.score.id);
         this.notifications.success(`Saved ${score}/5 for "${this.data.title}"`);

@@ -13,7 +13,7 @@ html {
         primary: mat.$azure-palette,
         tertiary: mat.$blue-palette,
       ),
-      typography: 'IBM Plex Mono',
+      typography: 'Silkscreen',
       density: -1,
     )
   );
@@ -62,13 +62,21 @@ body {
   height: 100%;
 }
 
+:where(*:not(mat-icon):not(.material-symbols-outlined)) {
+  font-family: 'Silkscreen', monospace !important;
+}
+
+mat-icon.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined' !important;
+}
+
 
 h1,
 h2,
 h3,
 .mat-mdc-card-title,
 .mat-mdc-dialog-title {
-  font-family: 'Press Start 2P', 'Courier New', monospace !important;
+  font-family: 'Silkscreen', monospace !important;
   font-weight: 400 !important;
   line-height: 1.7 !important;
   letter-spacing: 0 !important;
@@ -99,7 +107,7 @@ h3 { font-size: 10px !important; }
 .mat-mdc-raised-button {
   min-height: 40px;
   border-radius: 0 !important;
-  font-family: 'IBM Plex Mono', monospace !important;
+  font-family: 'Silkscreen', monospace !important;
   font-weight: 700 !important;
 }
 
@@ -149,7 +157,7 @@ h3 { font-size: 10px !important; }
 
 .mat-mdc-header-cell {
   color: var(--pixel-ink) !important;
-  font-family: 'IBM Plex Mono', monospace !important;
+  font-family: 'Silkscreen', monospace !important;
   font-weight: 700 !important;
 }
 

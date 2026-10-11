@@ -1,6 +1,5 @@
 <div class="page-header">
   <div>
-    <h1>Dashboard</h1>
     <p class="subtitle">{{ today | date: 'fullDate' }} &middot; keep leveling up!</p>
   </div>
   <div class="actions">
@@ -122,7 +121,7 @@
   <app-daily-activities
     [embedded]="true"
     (dateChanged)="changeDate($event)"
-    (activityGraded)="refreshAll()"
+    (activitiesChanged)="refreshAll()"
   />
 
   <!-- Goals summary -->
@@ -136,7 +135,7 @@
         <div class="empty-state">
           <mat-icon>flag</mat-icon>
           <p>No goals yet.</p>
-          <a mat-flat-button routerLink="/goals">Create a goal</a>
+          <button mat-flat-button type="button" (click)="addGoal()">Create a goal</button>
         </div>
       } @else {
         <ul class="summary-list" role="list">

@@ -8,7 +8,7 @@
   >
     <div class="brand">
       <mat-icon class="brand-icon">trending_up</mat-icon>
-      <span>Level-UP My Life</span>
+      <span>Personal growth &amp; productivity</span>
     </div>
     <mat-nav-list>
       @for (item of navItems; track item.path) {
@@ -33,13 +33,12 @@
         <button mat-icon-button type="button" aria-label="Toggle navigation" (click)="drawer.toggle()">
           <mat-icon>menu</mat-icon>
         </button>
-        <span class="toolbar-title">Level-UP My Life</span>
-      } @else {
-        <span class="toolbar-title">Personal growth &amp; productivity</span>
       }
+      <span class="toolbar-title">Level-up my life</span>
     </mat-toolbar>
     <main class="content">
       <router-outlet />
     </main>
   </mat-sidenav-content>
 </mat-sidenav-container>
+<app-robot-celebration />

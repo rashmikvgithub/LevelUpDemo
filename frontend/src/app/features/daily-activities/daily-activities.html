@@ -42,7 +42,7 @@
       <div class="empty-state">
         <mat-icon>playlist_add</mat-icon>
         <p>No activities tracked on this day.</p>
-        <a mat-flat-button routerLink="/activities">Add an activity</a>
+        <button mat-flat-button type="button" (click)="addActivity()">Add an activity</button>
       </div>
     } @else {
       <ul class="summary-list" role="list">

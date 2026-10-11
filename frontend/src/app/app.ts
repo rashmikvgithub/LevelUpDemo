@@ -8,6 +8,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { map } from 'rxjs';
+import { RobotCelebrationView } from './shared/components/robot-celebration';
 
 interface NavItem {
   path: string;
@@ -26,6 +27,7 @@ interface NavItem {
     MatListModule,
     MatIconModule,
     MatButtonModule,
+    RobotCelebrationView,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',

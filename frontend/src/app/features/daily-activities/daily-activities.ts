@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -14,6 +15,7 @@ import { DailyActivity, SCORE_LABELS } from '../../core/models/activity.models';
 import { ActivityService } from '../../core/services/activity.service';
 import { addDays, startOfToday, toIsoDate } from '../../core/utils/date.utils';
 import { DialogLauncher } from '../../shared/dialogs/dialog-launcher.service';
+import { ActivityFormDialog } from '../activities/activity-form-dialog';
 
 @Component({
   selector: 'app-daily-activities',
@@ -35,10 +37,11 @@ import { DialogLauncher } from '../../shared/dialogs/dialog-launcher.service';
 export class DailyActivities {
   private readonly activityService = inject(ActivityService);
   private readonly dialogs = inject(DialogLauncher);
+  private readonly dialog = inject(MatDialog);
 
   readonly embedded = input(false);
   readonly dateChanged = output<Date>();
-  readonly activityGraded = output<void>();
+  readonly activitiesChanged = output<void>();
 
   protected readonly scoreLabels = SCORE_LABELS;
   protected readonly today = startOfToday();
@@ -76,7 +79,18 @@ export class DailyActivities {
       .subscribe((saved) => {
         if (!saved) return;
         this.load();
-        this.activityGraded.emit();
+        this.activitiesChanged.emit();
+      });
+  }
+
+  protected addActivity(): void {
+    this.dialog
+      .open(ActivityFormDialog, { data: null, width: '520px', maxWidth: '95vw' })
+      .afterClosed()
+      .subscribe((saved) => {
+        if (!saved) return;
+        this.load();
+        this.activitiesChanged.emit();
       });
   }
 
