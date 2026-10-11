@@ -16,7 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { catchError, debounceTime, forkJoin, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { Activity, ActivityScore, SCORE_LABELS } from '../../core/models/activity.models';
-import { ShownRecommendation } from '../../core/models/recommendation.models';
+import { RecommendationRequest, ShownRecommendation } from '../../core/models/recommendation.models';
 import { ActivityService } from '../../core/services/activity.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { RecommendationService } from '../../core/services/recommendation.service';
@@ -57,8 +57,8 @@ export class ScoreInsights {
   private readonly recommendations = inject(RecommendationService);
   private readonly notifications = inject(NotificationService);
   private readonly searchTrigger = new Subject<void>();
-  /** Emits the activity to get an idea for, or null to cancel any in-flight request and clear the suggestion. */
-  private readonly suggestTrigger = new Subject<number | null>();
+  /** Emits recommendation context, or null to cancel any in-flight request and clear the suggestion. */
+  private readonly suggestTrigger = new Subject<RecommendationRequest | null>();
 
   protected readonly scoreLabels = SCORE_LABELS;
   protected readonly columns = ['evaluationDate', 'title', 'score', 'notes'];
@@ -171,13 +171,11 @@ export class ScoreInsights {
 
     this.suggestTrigger
       .pipe(
-        tap((activityId) => this.suggestionLoading.set(activityId !== null)),
-        switchMap((activityId) =>
-          activityId === null
+        tap((request) => this.suggestionLoading.set(request !== null)),
+        switchMap((request) =>
+          request === null
             ? of(null)
-            : this.recommendations
-                .suggest({ category: 'Activity', activityId, trigger: 'Manual' })
-                .pipe(catchError(() => of(null))),
+            : this.recommendations.suggest(request).pipe(catchError(() => of(null))),
         ),
         takeUntilDestroyed(),
       )
@@ -196,7 +194,14 @@ export class ScoreInsights {
     }
 
     this.analysisVisible.set(true);
-    this.suggestTrigger.next(activityId);
+    const { from, to } = this.filters.getRawValue();
+    this.suggestTrigger.next({
+      category: 'Activity',
+      activityId,
+      trigger: 'Manual',
+      from: from ? toIsoDate(from) : null,
+      to: to ? toIsoDate(to) : null,
+    });
   }
 
   protected clearFilters(): void {

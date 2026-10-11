@@ -26,21 +26,22 @@
   margin-top: 16px;
 }
 
-.analysis-card {
-  margin-top: 16px;
+.analysis-section {
+  padding-top: 16px;
+  border-top: 2px solid var(--mat-sys-outline-variant);
 }
 
-.analysis-card h2 {
+.analysis-section h2 {
   margin: 0;
   font: 600 18px/1.5 'IBM Plex Mono', monospace;
 }
 
-.analysis-card h2 span {
+.analysis-section h2 span {
   font: inherit;
   color: var(--mat-sys-on-surface-variant);
 }
 
-.analysis-card h3 {
+.analysis-section h3 {
   margin: 20px 0 8px;
   font-size: 16px;
   font-weight: 500;
@@ -51,12 +52,12 @@
   color: var(--mat-sys-on-surface-variant);
 }
 
-.analysis-card ul {
+.analysis-section ul {
   margin: 0;
   padding-left: 24px;
 }
 
-.analysis-card li + li {
+.analysis-section li + li {
   margin-top: 8px;
 }
 
@@ -102,20 +103,55 @@
 
 .suggestion {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   align-items: flex-start;
-  padding: 12px 16px;
-  border-radius: 12px;
+  padding: 18px 20px;
+  border: 2px solid var(--pixel-ink);
+  border-radius: 0;
   background: var(--mat-sys-tertiary-container);
   color: var(--mat-sys-on-tertiary-container);
+  box-shadow: 4px 4px 0 rgba(32, 49, 60, 0.35);
 }
 
-.suggestion p {
+.suggestion-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.suggestion-label {
   margin: 0;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--mat-sys-on-tertiary-container);
+  opacity: 0.75;
+}
+
+.suggestion-text {
+  margin: 0;
+  font-size: 11px;
+  line-height: 2.1;
+  letter-spacing: 0.4px;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.bulb-badge {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--pixel-ink);
+  background: var(--pixel-gold);
+  box-shadow: 2px 2px 0 rgba(32, 49, 60, 0.35);
 }
 
 .bulb {
   flex: none;
+  color: var(--pixel-ink);
 }
 
 .status-chip {

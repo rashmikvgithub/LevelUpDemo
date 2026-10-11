@@ -21,11 +21,13 @@ export interface RecommendationRequest {
   activityId?: number | null;
   goalId?: number | null;
   trigger?: RecommendationTrigger;
+  from?: string | null;
+  to?: string | null;
 }
 
 export interface ShownRecommendation {
   historyId: number;
-  recommendationId: number;
+  recommendationId: number | null;
   text: string;
   category: RecommendationCategory;
   shownDate: string;

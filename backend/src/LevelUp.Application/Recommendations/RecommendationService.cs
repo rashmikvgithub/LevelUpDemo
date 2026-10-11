@@ -23,6 +23,7 @@ public sealed class RecommendationService(
     IRecommendationRepository recommendations,
     IRecommendationHistoryRepository history,
     IActivityRepository activities,
+    IActivityScoreRepository activityScores,
     IGoalRepository goals,
     IRecommendationProvider provider,
     IUnitOfWork unitOfWork,
@@ -73,17 +74,28 @@ public sealed class RecommendationService(
     {
         await requestValidator.ValidateAndThrowAsync(request, cancellationToken);
 
-        if (request.ActivityId is { } activityId && !await activities.ExistsAsync(activityId, cancellationToken))
-            throw new NotFoundException(nameof(Activity), activityId);
+        Activity? activity = null;
+        IReadOnlyList<string> notes = [];
+        if (request.ActivityId is { } activityId)
+        {
+            activity = await activities.GetByIdAsync(activityId, cancellationToken)
+                ?? throw new NotFoundException(nameof(Activity), activityId);
+            var scores = await activityScores.ListForActivityAsync(activityId, request.From, request.To, cancellationToken);
+            notes = scores
+                .Where(score => !string.IsNullOrWhiteSpace(score.Notes))
+                .Select(score => $"{score.EvaluationDate:yyyy-MM-dd} (score {score.Score}/5): {score.Notes!.Trim()}")
+                .ToList();
+        }
         if (request.GoalId is { } goalId && !await goals.ExistsAsync(goalId, cancellationToken))
             throw new NotFoundException(nameof(Goal), goalId);
 
-        var recommendation = await provider.GetRecommendationAsync(request, cancellationToken)
+        var context = new RecommendationContext(request, activity?.Title, notes);
+        var recommendation = await provider.GetRecommendationAsync(context, cancellationToken)
             ?? throw new BusinessRuleException("No active recommendations are available. Add some on the Recommendations page.");
 
         var entry = new RecommendationHistory
         {
-            RecommendationId = recommendation.Id,
+            RecommendationId = recommendation.Id == 0 ? null : recommendation.Id,
             RecommendationText = recommendation.Text,
             ActivityId = request.ActivityId,
             GoalId = request.GoalId,
@@ -93,7 +105,7 @@ public sealed class RecommendationService(
         await history.AddAsync(entry, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return new ShownRecommendationDto(entry.Id, recommendation.Id, recommendation.Text, recommendation.Category, entry.ShownDate);
+        return new ShownRecommendationDto(entry.Id, entry.RecommendationId, recommendation.Text, recommendation.Category, entry.ShownDate);
     }
 
     public async Task<IReadOnlyList<RecommendationHistoryDto>> GetHistoryAsync(int? activityId, int? goalId, int take, CancellationToken cancellationToken = default)

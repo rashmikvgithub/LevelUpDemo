@@ -10,15 +10,21 @@ namespace LevelUp.Application.Recommendations;
 /// </summary>
 public interface IRecommendationProvider
 {
-    Task<Recommendation?> GetRecommendationAsync(RecommendationRequest request, CancellationToken cancellationToken = default);
+    Task<Recommendation?> GetRecommendationAsync(RecommendationContext context, CancellationToken cancellationToken = default);
 }
+
+public sealed record RecommendationContext(
+    RecommendationRequest Request,
+    string? ActivityName,
+    IReadOnlyList<string> Notes);
 
 public sealed class RandomRecommendationProvider(
     IRecommendationRepository recommendations,
     IRecommendationHistoryRepository history) : IRecommendationProvider
 {
-    public async Task<Recommendation?> GetRecommendationAsync(RecommendationRequest request, CancellationToken cancellationToken = default)
+    public async Task<Recommendation?> GetRecommendationAsync(RecommendationContext context, CancellationToken cancellationToken = default)
     {
+        var request = context.Request;
         RecommendationCategory[] categories = [request.Category, RecommendationCategory.General];
         var ids = await recommendations.GetActiveIdsAsync(categories.Distinct().ToArray(), cancellationToken);
         if (ids.Count == 0)

@@ -17,7 +17,6 @@ public static class DependencyInjection
         services.AddScoped<IGoalService, GoalService>();
         services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IRecommendationService, RecommendationService>();
-        services.AddScoped<IRecommendationProvider, RandomRecommendationProvider>();
 
         return services;
     }

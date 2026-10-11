@@ -31,5 +31,9 @@ public sealed class RecommendationRequestValidator : AbstractValidator<Recommend
             .Null()
             .When(x => x.Category == RecommendationCategory.Activity)
             .WithMessage("Activity recommendations cannot reference a goal.");
+        RuleFor(x => x)
+            .Must(x => !x.From.HasValue || !x.To.HasValue || x.From <= x.To)
+            .WithName("DateRange")
+            .WithMessage("'From' must be on or before 'To'.");
     }
 }

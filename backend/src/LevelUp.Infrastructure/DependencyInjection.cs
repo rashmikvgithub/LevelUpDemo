@@ -1,4 +1,5 @@
 using LevelUp.Application.Common.Interfaces;
+using LevelUp.Application.Recommendations;
 using LevelUp.Infrastructure.Persistence;
 using LevelUp.Infrastructure.Persistence.Repositories;
 using LevelUp.Infrastructure.Services;
@@ -34,6 +35,7 @@ public static class DependencyInjection
         services.AddScoped<IGoalRepository, GoalRepository>();
         services.AddScoped<IRecommendationRepository, RecommendationRepository>();
         services.AddScoped<IRecommendationHistoryRepository, RecommendationHistoryRepository>();
+        services.AddHttpClient<IRecommendationProvider, OpenAiRecommendationProvider>();
 
         return services;
     }

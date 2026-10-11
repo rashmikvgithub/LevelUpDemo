@@ -16,8 +16,13 @@ import { RecommendationService } from '../../core/services/recommendation.servic
   template: `
     @if (suggestion(); as s) {
       <div class="suggestion" role="status" aria-live="polite">
-        <mat-icon class="bulb">lightbulb</mat-icon>
-        <p>{{ s.text }}</p>
+        <span class="bulb-badge" aria-hidden="true">
+          <mat-icon class="bulb">lightbulb</mat-icon>
+        </span>
+        <div class="suggestion-body">
+          <p class="suggestion-label">Your idea</p>
+          <p class="suggestion-text">{{ s.text }}</p>
+        </div>
       </div>
     }
     <button mat-stroked-button type="button" class="help-btn" (click)="fetch()" [disabled]="loading()">
@@ -30,14 +35,28 @@ import { RecommendationService } from '../../core/services/recommendation.servic
     </button>
   `,
   styles: `
-    :host { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+    :host { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
     .suggestion {
-      display: flex; gap: 12px; align-items: flex-start; width: 100%; box-sizing: border-box;
-      padding: 12px 16px; border-radius: 12px;
+      display: flex; gap: 16px; align-items: flex-start; width: 100%; box-sizing: border-box;
+      padding: 18px 20px; border: 2px solid var(--pixel-ink); border-radius: 0;
       background: var(--mat-sys-tertiary-container); color: var(--mat-sys-on-tertiary-container);
+      box-shadow: 4px 4px 0 rgba(32, 49, 60, 0.35);
     }
-    .suggestion p { margin: 0; }
-    .bulb { flex: none; }
+    .suggestion-body { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+    .suggestion-label {
+      margin: 0; font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+      color: var(--mat-sys-on-tertiary-container); opacity: 0.75;
+    }
+    .suggestion-text {
+      margin: 0; font-size: 11px; line-height: 2.1; letter-spacing: 0.4px;
+      overflow-wrap: anywhere; white-space: pre-line;
+    }
+    .bulb-badge {
+      flex: none; display: grid; place-items: center; width: 36px; height: 36px;
+      border: 2px solid var(--pixel-ink); background: var(--pixel-gold);
+      box-shadow: 2px 2px 0 rgba(32, 49, 60, 0.35);
+    }
+    .bulb { flex: none; color: var(--pixel-ink); }
     .help-btn mat-progress-spinner { display: inline-block; margin-right: 8px; }
   `,
 })

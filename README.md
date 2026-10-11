@@ -70,6 +70,7 @@ LevelUp/
 - .NET 9 SDK
 - Node.js 20+ and npm
 - SQL Server or SQL Server LocalDB. The default connection string is `Server=(localdb)\MSSQLLocalDB;Database=LevelUpMyLife;...` in `backend/src/LevelUp.Api/appsettings.json`.
+- An OpenAI API key for AI recommendations.
 
 ## Running locally
 
@@ -88,6 +89,15 @@ cd frontend
 npm install
 npx ng serve            # http://localhost:4200 (use --port to change); /api is proxied to the API
 ```
+
+To enable AI recommendations, set the key as a backend environment variable before starting the API. Never put the key in Angular code or commit it to a configuration file:
+
+```powershell
+$env:OpenAI__ApiKey = "your-api-key"
+dotnet run --project src/LevelUp.Api --launch-profile http
+```
+
+The optional model setting is `OpenAI:Model` in `appsettings.json` and defaults to `gpt-4o-mini`.
 
 **Tests / build**
 

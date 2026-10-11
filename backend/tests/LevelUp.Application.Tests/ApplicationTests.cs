@@ -4,6 +4,7 @@ using LevelUp.Application.Common.Exceptions;
 using LevelUp.Application.Common.Interfaces;
 using LevelUp.Application.Dashboard;
 using LevelUp.Application.Goals;
+using LevelUp.Application.Recommendations;
 using LevelUp.Domain.Entities;
 using LevelUp.Domain.Enums;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -155,6 +156,71 @@ public class ValidatorTests
     {
         var result = new CreateGoalCheckpointRequestValidator(Clock).Validate(new CreateGoalCheckpointRequest(percent, null, null));
         Assert.Equal(valid, result.IsValid);
+    }
+
+    [Fact]
+    public void Recommendation_RejectsInvertedDateRange()
+    {
+        var request = new RecommendationRequest
+        {
+            ActivityId = 7,
+            From = Clock.Today,
+            To = Clock.Today.AddDays(-1)
+        };
+
+        Assert.False(new RecommendationRequestValidator().Validate(request).IsValid);
+    }
+}
+
+public class RecommendationServiceTests
+{
+    private static readonly FixedClock Clock = new(new DateOnly(2026, 10, 10));
+
+    [Fact]
+    public async Task GetSuggestion_ProvidesActivityNameAndDateRangeNotesToProvider()
+    {
+        var recommendations = new Mock<IRecommendationRepository>();
+        var history = new Mock<IRecommendationHistoryRepository>();
+        var activities = new Mock<IActivityRepository>();
+        var scores = new Mock<IActivityScoreRepository>();
+        var goals = new Mock<IGoalRepository>();
+        var provider = new Mock<IRecommendationProvider>();
+        var unitOfWork = new Mock<IUnitOfWork>();
+        var from = Clock.Today.AddDays(-7);
+        var to = Clock.Today;
+        RecommendationContext? capturedContext = null;
+
+        activities.Setup(r => r.GetByIdAsync(7, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new Activity { Id = 7, Title = "Exercise" });
+        scores.Setup(r => r.ListForActivityAsync(7, from, to, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(
+            [
+                new ActivityScore { EvaluationDate = to, Score = 1, Notes = "  skipped because I was tired  " },
+                new ActivityScore { EvaluationDate = to.AddDays(-1), Score = 4, Notes = null }
+            ]);
+        provider.Setup(p => p.GetRecommendationAsync(It.IsAny<RecommendationContext>(), It.IsAny<CancellationToken>()))
+            .Callback<RecommendationContext, CancellationToken>((context, _) => capturedContext = context)
+            .ReturnsAsync(new Recommendation { Text = "1. Prepare early.", Category = RecommendationCategory.Activity });
+
+        var service = new RecommendationService(
+            recommendations.Object,
+            history.Object,
+            activities.Object,
+            scores.Object,
+            goals.Object,
+            provider.Object,
+            unitOfWork.Object,
+            Clock,
+            new SaveRecommendationRequestValidator(),
+            new RecommendationRequestValidator());
+        var request = new RecommendationRequest { ActivityId = 7, From = from, To = to };
+
+        await service.GetSuggestionAsync(request);
+
+        Assert.NotNull(capturedContext);
+        Assert.Equal("Exercise", capturedContext.ActivityName);
+        Assert.Equal(["2026-10-10 (score 1/5): skipped because I was tired"], capturedContext.Notes);
+        scores.Verify(r => r.ListForActivityAsync(7, from, to, It.IsAny<CancellationToken>()), Times.Once);
     }
 }
 

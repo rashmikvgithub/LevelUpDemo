@@ -19,12 +19,14 @@ public sealed record RecommendationRequest
     public int? ActivityId { get; init; }
     public int? GoalId { get; init; }
     public RecommendationTrigger Trigger { get; init; } = RecommendationTrigger.Manual;
+    public DateOnly? From { get; init; }
+    public DateOnly? To { get; init; }
 }
 
 /// <summary>A recommendation that was just shown to the user (and logged to history).</summary>
 public sealed record ShownRecommendationDto(
     int HistoryId,
-    int RecommendationId,
+    int? RecommendationId,
     string Text,
     RecommendationCategory Category,
     DateTime ShownDate);

@@ -117,18 +117,8 @@
       </button>
     </div>
 
-    @if (suggestion(); as s) {
-      <div class="suggestion" role="status" aria-live="polite">
-        <mat-icon class="bulb">lightbulb</mat-icon>
-        <p>{{ s.text }}</p>
-      </div>
-    }
-  </mat-card-content>
-</mat-card>
-
-@if (analysisVisible()) {
-  <mat-card appearance="outlined" class="analysis-card" role="region" aria-label="Score analysis">
-    <mat-card-content>
+    @if (analysisVisible()) {
+      <section class="analysis-section" role="region" aria-label="Score analysis">
       @if (loading()) {
         <div class="analysis-loading">
           <mat-progress-spinner diameter="22" mode="indeterminate" />
@@ -164,6 +154,21 @@
           }
         </ul>
       }
-    </mat-card-content>
-  </mat-card>
-}
+      </section>
+    }
+
+    @if (suggestion(); as s) {
+      <div class="suggestion" role="status" aria-live="polite">
+        <span class="bulb-badge" aria-hidden="true">
+          <mat-icon class="bulb">lightbulb</mat-icon>
+        </span>
+        <div class="suggestion-body">
+          <p class="suggestion-label">
+            Recommendation for {{ selectedActivity()?.title ?? 'your activity' }}
+          </p>
+          <p class="suggestion-text">{{ s.text }}</p>
+        </div>
+      </div>
+    }
+  </mat-card-content>
+</mat-card>
