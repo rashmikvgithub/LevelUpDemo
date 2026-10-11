@@ -119,62 +119,11 @@
 </mat-card>
 
 <div class="lists-grid">
-  <!-- Activities summary -->
-  <mat-card appearance="outlined" class="section-card">
-    <mat-card-header>
-      <mat-card-title>Daily activities</mat-card-title>
-      <mat-card-subtitle>{{ gradedCount() }} of {{ dailyActivities().length }} graded &middot; click a row to grade it</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="date-nav">
-        <button mat-icon-button type="button" (click)="shiftDate(-1)" matTooltip="Previous day" aria-label="Previous day">
-          <mat-icon>chevron_left</mat-icon>
-        </button>
-        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="date-field">
-          <mat-label>Day</mat-label>
-          <input matInput [matDatepicker]="dayPicker" [max]="today" [ngModel]="selectedDate()" (ngModelChange)="changeDate($event)" />
-          <mat-datepicker-toggle matIconSuffix [for]="dayPicker" />
-          <mat-datepicker #dayPicker />
-        </mat-form-field>
-        <button mat-icon-button type="button" (click)="shiftDate(1)" [disabled]="isToday()" matTooltip="Next day" aria-label="Next day">
-          <mat-icon>chevron_right</mat-icon>
-        </button>
-        @if (!isToday()) {
-          <button mat-button type="button" (click)="changeDate(today)">Today</button>
-        }
-      </div>
-
-      @if (dailyActivities().length === 0 && !loading()) {
-        <div class="empty-state">
-          <mat-icon>playlist_add</mat-icon>
-          <p>No activities tracked on this day.</p>
-          <a mat-flat-button routerLink="/activities">Add an activity</a>
-        </div>
-      } @else {
-        <ul class="summary-list" role="list">
-          @for (a of dailyActivities(); track a.activityId) {
-            <li>
-              <button type="button" class="summary-row" (click)="gradeActivity(a)" [attr.aria-label]="'Grade ' + a.title">
-                <span class="row-main">
-                  <span class="row-title">{{ a.title }}</span>
-                  @if (a.notes) {
-                    <span class="row-sub muted">{{ a.notes }}</span>
-                  } @else if (a.description) {
-                    <span class="row-sub muted">{{ a.description }}</span>
-                  }
-                </span>
-                @if (a.score !== null) {
-                  <span class="score-chip score-{{ a.score }}" [matTooltip]="scoreLabels[a.score]">{{ a.score }}</span>
-                } @else {
-                  <span class="score-chip" matTooltip="Not graded yet">-</span>
-                }
-              </button>
-            </li>
-          }
-        </ul>
-      }
-    </mat-card-content>
-  </mat-card>
+  <app-daily-activities
+    [embedded]="true"
+    (dateChanged)="changeDate($event)"
+    (activityGraded)="refreshAll()"
+  />
 
   <!-- Goals summary -->
   <mat-card appearance="outlined" class="section-card">

@@ -13,6 +13,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/activities/activity-list').then((m) => m.ActivityList),
   },
   {
+    path: 'daily-activities',
+    title: 'Daily Activities | Level-UP My Life',
+    loadComponent: () => import('./features/daily-activities/daily-activities').then((m) => m.DailyActivities),
+  },
+  {
     path: 'activities/:id',
     title: 'Activity details | Level-UP My Life',
     loadComponent: () => import('./features/activities/activity-detail').then((m) => m.ActivityDetail),

@@ -1,0 +1,78 @@
+@if (!embedded()) {
+  <div class="page-header">
+    <div>
+      <h1>Daily Activities</h1>
+      <p class="subtitle">Grade your daily activities from 0 to 5 and review previous days.</p>
+    </div>
+    <div class="actions">
+      <a mat-stroked-button routerLink="/activities"><mat-icon>checklist</mat-icon> Manage activities</a>
+    </div>
+  </div>
+}
+
+<mat-card appearance="outlined" class="section-card">
+  <mat-card-header>
+    <mat-card-title>Daily activities</mat-card-title>
+    <mat-card-subtitle>{{ gradedCount() }} of {{ dailyActivities().length }} graded &middot; click a row to grade it</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="date-nav">
+      <button mat-icon-button type="button" (click)="shiftDate(-1)" matTooltip="Previous day" aria-label="Previous day">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="date-field">
+        <mat-label>Day</mat-label>
+        <input matInput [matDatepicker]="dayPicker" [max]="today" [ngModel]="selectedDate()" (ngModelChange)="changeDate($event)" />
+        <mat-datepicker-toggle matIconSuffix [for]="dayPicker" />
+        <mat-datepicker #dayPicker />
+      </mat-form-field>
+      <button mat-icon-button type="button" (click)="shiftDate(1)" [disabled]="isToday()" matTooltip="Next day" aria-label="Next day">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+      @if (!isToday()) {
+        <button mat-button type="button" (click)="changeDate(today)">Today</button>
+      }
+    </div>
+
+    @if (loading()) {
+      <mat-progress-bar mode="indeterminate" class="loading-bar" />
+    }
+
+    @if (dailyActivities().length === 0 && !loading()) {
+      <div class="empty-state">
+        <mat-icon>playlist_add</mat-icon>
+        <p>No activities tracked on this day.</p>
+        <a mat-flat-button routerLink="/activities">Add an activity</a>
+      </div>
+    } @else {
+      <ul class="summary-list" role="list">
+        @for (activity of dailyActivities(); track activity.activityId) {
+          <li>
+            <button
+              type="button"
+              class="summary-row"
+              (click)="gradeActivity(activity)"
+              [attr.aria-label]="'Grade ' + activity.title"
+            >
+              <span class="row-main">
+                <span class="row-title">{{ activity.title }}</span>
+                @if (activity.notes) {
+                  <span class="row-sub muted">{{ activity.notes }}</span>
+                } @else if (activity.description) {
+                  <span class="row-sub muted">{{ activity.description }}</span>
+                }
+              </span>
+              @if (activity.score !== null) {
+                <span class="score-chip score-{{ activity.score }}" [matTooltip]="scoreLabels[activity.score]">
+                  {{ activity.score }}
+                </span>
+              } @else {
+                <span class="score-chip" matTooltip="Not graded yet">-</span>
+              }
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  </mat-card-content>
+</mat-card>

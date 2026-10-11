@@ -95,17 +95,6 @@
   grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
 }
 
-.date-nav {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-bottom: 8px;
-}
-
-.date-field {
-  width: 180px;
-}
-
 .summary-list {
   list-style: none;
   margin: 0;
