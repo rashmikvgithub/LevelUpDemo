@@ -114,7 +114,8 @@ export class GradeActivityDialog {
       .saveScore(this.data.activityId, { evaluationDate: toIsoDate(date), score: score!, notes: notes || null })
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe((result) => {
-        if (score! >= 1) this.celebration.play();
+        if (score === 0) this.celebration.play('sad');
+        else if (score! >= 1) this.celebration.play('good');
         this.saved.set(true);
         this.existingScoreId.set(result.score.id);
         this.notifications.success(`Saved ${score}/5 for "${this.data.title}"`);

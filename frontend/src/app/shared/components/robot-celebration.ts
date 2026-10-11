@@ -1,11 +1,19 @@
 import { Component, effect, HostListener, inject, Injectable, signal } from '@angular/core';
 
+export type RobotAnimationKind = 'good' | 'sad';
+
+interface RobotAnimationRequest {
+  id: number;
+  kind: RobotAnimationKind;
+}
+
 @Injectable({ providedIn: 'root' })
 export class RobotCelebrationService {
-  readonly requestId = signal(0);
+  readonly request = signal<RobotAnimationRequest | null>(null);
+  private nextRequestId = 0;
 
-  play(): void {
-    this.requestId.update((requestId) => requestId + 1);
+  play(kind: RobotAnimationKind): void {
+    this.request.set({ id: ++this.nextRequestId, kind });
   }
 }
 
@@ -14,8 +22,8 @@ export class RobotCelebrationService {
   template: `
     @if (visible()) {
       <div class="robot-cheer" role="status" aria-live="polite">
-        <p>Good Job!</p>
-        <img [src]="frames[frameIndex()]" alt="Celebration robot" width="304" height="368" />
+        <p>{{ message() }}</p>
+        <img [src]="frames()[frameIndex()]" [alt]="imageAlt()" width="304" height="368" />
       </div>
     }
   `,
@@ -34,14 +42,17 @@ export class RobotCelebrationService {
       flex-direction: column;
       align-items: center;
       gap: 8px;
+      width: min(100%, calc(100vw - 16px));
     }
 
     p {
+      max-width: 100%;
       margin: 0;
       color: #20313c;
-      font: 36px/1.8 'Silkscreen', monospace;
+      font: 72px/1.4 'Silkscreen', monospace;
       text-shadow: 2px 2px 0 #e7b83f;
-      white-space: nowrap;
+      text-align: center;
+      white-space: normal;
     }
 
     img {
@@ -53,12 +64,22 @@ export class RobotCelebrationService {
   `,
 })
 export class RobotCelebrationView {
-  protected readonly frames = [
+  private readonly goodFrames = [
     '/assets/robot-cheer/frame-0.png',
     '/assets/robot-cheer/frame-1.png',
     '/assets/robot-cheer/frame-2.png',
     '/assets/robot-cheer/frame-3.png',
   ];
+  private readonly sadFrames = [
+    '/assets/robot-sad/frame-4.png',
+    '/assets/robot-sad/frame-3.png',
+    '/assets/robot-sad/frame-2.png',
+    '/assets/robot-sad/frame-1.png',
+    '/assets/robot-sad/frame-0.png',
+  ];
+  protected readonly frames = signal(this.goodFrames);
+  protected readonly message = signal('Good Job!');
+  protected readonly imageAlt = signal('Celebration robot');
   protected readonly frameIndex = signal(0);
   protected readonly visible = signal(false);
 
@@ -66,18 +87,25 @@ export class RobotCelebrationView {
   private timers: number[] = [];
 
   constructor() {
-    for (const frame of this.frames) {
+    for (const frame of [...this.goodFrames, ...this.sadFrames]) {
       const image = new Image();
       image.src = frame;
     }
 
     effect((onCleanup) => {
-      const requestId = this.celebration.requestId();
-      if (requestId === 0) return;
+      const request = this.celebration.request();
+      if (!request) return;
+
+      const isSad = request.kind === 'sad';
+      const frames = isSad ? this.sadFrames : this.goodFrames;
+      const frameDuration = isSad ? 400 : 300;
+      this.frames.set(frames);
+      this.message.set(isSad ? 'Oh NO!' : 'Good Job!');
+      this.imageAlt.set(isSad ? 'Sad robot' : 'Celebration robot');
 
       this.visible.set(true);
       this.frameIndex.set(0);
-      const totalFrames = this.frames.length * 4;
+      const totalFrames = frames.length * 4;
       this.timers = Array.from({ length: totalFrames }, (_, index) => {
         const nextFrame = index + 1;
         return window.setTimeout(() => {
@@ -86,9 +114,9 @@ export class RobotCelebrationView {
             this.frameIndex.set(0);
             this.timers = [];
           } else {
-            this.frameIndex.set(nextFrame % this.frames.length);
+            this.frameIndex.set(nextFrame % frames.length);
           }
-        }, nextFrame * 300);
+        }, nextFrame * frameDuration);
       });
 
       onCleanup(() => this.clearTimers());
