@@ -13,6 +13,7 @@ import { finalize } from 'rxjs';
 import { GoalService } from '../../core/services/goal.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { startOfToday, toIsoDate } from '../../core/utils/date.utils';
+import { CoinAnimationService } from '../components/coin-animation';
 import { HelpMe } from '../components/help-me';
 
 export interface GoalCheckpointDialogData {
@@ -96,6 +97,7 @@ export class GoalCheckpointDialog {
   private readonly dialogRef = inject(MatDialogRef<GoalCheckpointDialog, boolean>);
   private readonly goals = inject(GoalService);
   private readonly notifications = inject(NotificationService);
+  private readonly coinAnimation = inject(CoinAnimationService);
 
   protected readonly today = startOfToday();
   protected readonly saving = signal(false);
@@ -128,6 +130,8 @@ export class GoalCheckpointDialog {
       })
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe(() => {
+        const progressIncrease = Math.max(0, Math.round(Number(percentComplete)) - this.data.currentProgress);
+        this.coinAnimation.spawn(progressIncrease);
         this.notifications.success(`Logged ${percentComplete}% for "${this.data.title}"`);
         this.dialogRef.close(true);
       });

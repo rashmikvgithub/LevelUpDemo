@@ -9,6 +9,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { map } from 'rxjs';
 import { RobotCelebrationView } from './shared/components/robot-celebration';
+import { CoinAnimationView } from './shared/components/coin-animation';
 
 interface NavItem {
   path: string;
@@ -28,6 +29,7 @@ interface NavItem {
     MatIconModule,
     MatButtonModule,
     RobotCelebrationView,
+    CoinAnimationView,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
