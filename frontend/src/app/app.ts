@@ -38,7 +38,6 @@ export class App {
     { path: '/activities', label: 'Activities', icon: 'checklist' },
     { path: '/daily-activities', label: 'Daily Activities', icon: 'today' },
     { path: '/goals', label: 'Goals', icon: 'flag' },
-    { path: '/recommendations', label: 'Recommendations', icon: 'tips_and_updates' },
   ];
 
   protected readonly isHandset = toSignal(
