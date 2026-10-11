@@ -156,9 +156,11 @@
           }
         </p>
         <ul>
-          <li>{{ analysis.missedSummary }}</li>
           @if (analysis.averageSummary) {
             <li>{{ analysis.averageSummary }}</li>
+          }
+          @for (summary of analysis.scoreSummaries; track summary) {
+            <li>{{ summary }}</li>
           }
         </ul>
       }

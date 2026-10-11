@@ -102,13 +102,24 @@ export class ScoreInsights {
         periodStart: from,
         periodEnd: to,
         periodDays,
-        missedSummary: `No scores were recorded for ${activity.title} in the selected date range.`,
         averageSummary: null,
+        scoreSummaries: [] as string[],
       };
     }
 
-    const missedCount = scores.filter((score) => score.score === 0).length;
     const average = scores.reduce((sum, score) => sum + score.score, 0) / scores.length;
+    const countsByScore = new Map<number, number>();
+    for (const { score } of scores) {
+      countsByScore.set(score, (countsByScore.get(score) ?? 0) + 1);
+    }
+
+    const scoreSummaries = [...countsByScore.entries()]
+      .map(([value, count]) => ({ value, count }))
+      .sort((a, b) => a.value - b.value)
+      .map(
+        ({ value, count }) =>
+          `Score ${value} (${SCORE_LABELS[value]}) was recorded ${count} ${count === 1 ? 'time' : 'times'} in the selected date range.`,
+      );
 
     return {
       activity,
@@ -116,11 +127,8 @@ export class ScoreInsights {
       periodStart: from,
       periodEnd: to,
       periodDays,
-      missedSummary:
-        missedCount === 0
-          ? `${activity.title} was not missed in the selected date range.`
-          : `${activity.title} was missed ${missedCount} ${missedCount === 1 ? 'time' : 'times'} in the selected date range.`,
       averageSummary: `Your average score for ${activity.title} in this date range is ${average.toFixed(1)}/5.`,
+      scoreSummaries,
     };
   });
 
