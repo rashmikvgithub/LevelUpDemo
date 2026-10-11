@@ -1,0 +1,167 @@
+<div class="page-header">
+  <div>
+    <h1>Score Insights</h1>
+    <p class="subtitle">Search your daily activity grades by activity and date.</p>
+  </div>
+  <div class="actions">
+    <a mat-stroked-button routerLink="/daily-activities"><mat-icon>today</mat-icon> Grade today</a>
+  </div>
+</div>
+
+<mat-card appearance="outlined" class="stack">
+  <mat-card-content>
+    <form [formGroup]="filters" class="filters" aria-label="Score search filters">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Activity</mat-label>
+        <mat-select formControlName="activityId">
+          <mat-option [value]="null">All activities</mat-option>
+          @for (activity of activities(); track activity.id) {
+            <mat-option [value]="activity.id">{{ activity.title }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Date range</mat-label>
+        <mat-date-range-input [rangePicker]="datePicker" [max]="today">
+          <input matStartDate formControlName="from" placeholder="From" />
+          <input matEndDate formControlName="to" placeholder="To" />
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="datePicker" />
+        <mat-date-range-picker #datePicker />
+      </mat-form-field>
+
+      <button mat-button type="button" (click)="clearFilters()"><mat-icon>filter_alt_off</mat-icon> Clear</button>
+    </form>
+  </mat-card-content>
+</mat-card>
+
+@if (results().length > 0) {
+  <section class="summary-grid" aria-label="Search summary">
+    <mat-card appearance="outlined" class="stat-card">
+      <mat-card-content>
+        <span class="stat-label">Low scores (0-4)</span>
+        <span class="stat-value">{{ lowScoreCount() }}</span>
+      </mat-card-content>
+    </mat-card>
+  </section>
+}
+
+<mat-card appearance="outlined" class="results-card">
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+  <div class="table-wrapper">
+    <table mat-table [dataSource]="results()" aria-label="Daily activity grades">
+      <ng-container matColumnDef="evaluationDate">
+        <th mat-header-cell *matHeaderCellDef>Date</th>
+        <td mat-cell *matCellDef="let score">{{ score.evaluationDate | date: 'mediumDate' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef>Activity</th>
+        <td mat-cell *matCellDef="let score">
+          <a [routerLink]="['/activities', score.activityId]"><strong>{{ score.title }}</strong></a>
+          @if (score.status === 'Retired') {
+            <span class="status-chip Retired">Retired</span>
+          }
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="score">
+        <th mat-header-cell *matHeaderCellDef>Score</th>
+        <td mat-cell *matCellDef="let score">
+          <span class="score-chip score-{{ score.score }}" [matTooltip]="scoreLabels[score.score]">{{ score.score }}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="notes">
+        <th mat-header-cell *matHeaderCellDef>Notes</th>
+        <td mat-cell *matCellDef="let score">{{ score.notes || '-' }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns"></tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="columns.length">
+          <div class="empty-state">
+            <mat-icon>search</mat-icon>
+            <p>No grades found for this activity and date range.</p>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</mat-card>
+
+<mat-card appearance="outlined" class="ai-card">
+  <mat-card-content>
+    <div class="ai-header">
+      <div class="ai-intro">
+        <h2>AI recommendation</h2>
+        <p class="ai-hint">
+          @if (selectedActivity(); as activity) {
+            Get an idea to help you improve your <strong>{{ activity.title }}</strong> scores.
+          } @else {
+            Select a single activity above to get a recommendation.
+          }
+        </p>
+      </div>
+      <button mat-flat-button type="button" class="ai-btn" (click)="getRecommendation()" [disabled]="suggestionLoading()">
+        @if (suggestionLoading()) {
+          <mat-progress-spinner diameter="18" mode="indeterminate" />
+        } @else {
+          <mat-icon>{{ suggestion() ? 'refresh' : 'auto_awesome' }}</mat-icon>
+        }
+        {{ suggestion() ? 'Another idea' : 'AI Recommendation' }}
+      </button>
+    </div>
+
+    @if (suggestion(); as s) {
+      <div class="suggestion" role="status" aria-live="polite">
+        <mat-icon class="bulb">lightbulb</mat-icon>
+        <p>{{ s.text }}</p>
+      </div>
+    }
+  </mat-card-content>
+</mat-card>
+
+@if (analysisVisible()) {
+  <mat-card appearance="outlined" class="analysis-card" role="region" aria-label="Score analysis">
+    <mat-card-content>
+      @if (loading()) {
+        <div class="analysis-loading">
+          <mat-progress-spinner diameter="22" mode="indeterminate" />
+          <span>Analyzing scores for the selected date range...</span>
+        </div>
+      } @else if (scoreAnalysis(); as analysis) {
+        <h2>
+          {{ analysis.activity.title }}
+          @if (analysis.latestScore !== null) {
+            <span>(Latest score: {{ analysis.latestScore }}/5)</span>
+          }
+        </h2>
+        <h3>Score analysis</h3>
+        <p class="analysis-period">
+          @if (analysis.periodStart && analysis.periodEnd) {
+            Selected period: {{ analysis.periodStart | date: 'mediumDate' }} –
+            {{ analysis.periodEnd | date: 'mediumDate' }}
+            ({{ analysis.periodDays }} {{ analysis.periodDays === 1 ? 'day' : 'days' }})
+          } @else if (analysis.periodStart) {
+            Selected period: From {{ analysis.periodStart | date: 'mediumDate' }}
+          } @else if (analysis.periodEnd) {
+            Selected period: Through {{ analysis.periodEnd | date: 'mediumDate' }}
+          } @else {
+            Selected period: All recorded dates
+          }
+        </p>
+        <ul>
+          <li>{{ analysis.missedSummary }}</li>
+          @if (analysis.averageSummary) {
+            <li>{{ analysis.averageSummary }}</li>
+          }
+        </ul>
+      }
+    </mat-card-content>
+  </mat-card>
+}

@@ -33,6 +33,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/goals/goal-detail').then((m) => m.GoalDetail),
   },
   {
+    path: 'score-insights',
+    title: 'Score Insights | Level-UP My Life',
+    loadComponent: () => import('./features/score-insights/score-insights').then((m) => m.ScoreInsights),
+  },
+  {
     path: 'recommendations',
     title: 'Recommendations | Level-UP My Life',
     loadComponent: () => import('./features/recommendations/recommendation-list').then((m) => m.RecommendationList),
