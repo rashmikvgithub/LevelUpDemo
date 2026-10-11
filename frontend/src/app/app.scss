@@ -4,8 +4,15 @@
 
 .sidenav {
   width: 264px;
-  border-right: 3px solid var(--pixel-ink);
-  background: #eee8d3;
+  border-right: 3px solid #8fc4a2;
+  background: var(--pixel-grass);
+  color: var(--pixel-grass-text);
+  --mat-list-item-label-text-color: var(--pixel-grass-text);
+  --mat-list-item-leading-icon-color: #bbf7d0;
+  --mat-list-item-selected-label-text-color: #ffffff;
+  --mat-list-item-selected-leading-icon-color: #ffffff;
+  --mat-list-item-selected-state-layer-color: #2f7048;
+  --mat-list-item-hover-state-layer-color: #ffffff;
 }
 
 .brand {
@@ -14,7 +21,7 @@
   gap: 10px;
   min-height: 80px;
   padding: 8px 16px;
-  color: var(--pixel-ink);
+  color: var(--pixel-grass-text);
   font-family: 'Silkscreen', monospace;
   font-size: 16px;
   line-height: 1.5;
@@ -39,9 +46,32 @@
   min-height: 76px;
   height: auto;
   padding: 8px 28px;
-  background: #fffdf3;
-  border-bottom: 3px solid var(--pixel-ink);
-  box-shadow: 0 3px 0 rgba(32, 49, 60, 0.12);
+  background: var(--pixel-grass);
+  border-bottom: 3px solid #8fc4a2;
+  box-shadow: 0 3px 0 rgba(5, 46, 22, 0.3);
+  color: var(--pixel-grass-text);
+}
+
+.toolbar button {
+  color: var(--pixel-grass-text);
+}
+
+.sidenav .mdc-list-item__primary-text,
+.sidenav .mat-mdc-list-item-icon {
+  color: var(--pixel-grass-text) !important;
+}
+
+.sidenav .mdc-list-item--activated {
+  background-color: #2f7048;
+}
+
+.sidenav .mdc-list-item:not(.mdc-list-item--activated):hover {
+  background-color: rgba(240, 253, 244, 0.12);
+}
+
+.mat-sidenav-content {
+  background: var(--pixel-sky);
+  color: var(--pixel-sky-text);
 }
 
 .toolbar-icon {
@@ -54,11 +84,11 @@
 }
 
 .toolbar-title {
-  color: var(--pixel-teal);
+  color: var(--pixel-grass-text);
   font-family: 'Silkscreen', monospace;
   font-size: 32px;
   line-height: 1.35;
-  text-shadow: 2px 2px 0 #b9e9dc;
+  text-shadow: 2px 2px 0 #2f7048;
 }
 
 .content {

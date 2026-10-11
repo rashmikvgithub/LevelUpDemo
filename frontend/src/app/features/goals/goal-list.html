@@ -8,21 +8,25 @@
   </div>
 </div>
 
-<form [formGroup]="filters" class="filters" aria-label="Goal filters" style="margin-bottom: 16px">
-  <mat-form-field appearance="outline" subscriptSizing="dynamic">
-    <mat-label>Search</mat-label>
-    <mat-icon matIconPrefix>search</mat-icon>
-    <input matInput formControlName="search" placeholder="Title or description" />
-  </mat-form-field>
-  <mat-form-field appearance="outline" subscriptSizing="dynamic">
-    <mat-label>Status</mat-label>
-    <mat-select formControlName="status">
-      <mat-option value="">All</mat-option>
-      @for (s of statuses; track s) {
-        <mat-option [value]="s">{{ statusLabels[s] }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
+<form [formGroup]="filters" class="filters goal-filters" aria-label="Goal filters" style="margin-bottom: 16px">
+  <div class="goal-filter">
+    <label class="goal-filter-label" for="goal-search">Search</label>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-icon matIconPrefix>search</mat-icon>
+      <input id="goal-search" matInput formControlName="search" />
+    </mat-form-field>
+  </div>
+  <div class="goal-filter">
+    <label class="goal-filter-label" id="goal-status-label">Status</label>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-select formControlName="status" aria-labelledby="goal-status-label">
+        <mat-option value="">All</mat-option>
+        @for (s of statuses; track s) {
+          <mat-option [value]="s">{{ statusLabels[s] }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
 </form>
 
 @if (loading()) {
