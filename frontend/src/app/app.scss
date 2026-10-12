@@ -110,6 +110,8 @@
   align-items: center;
   justify-content: space-evenly;
   min-width: 0;
+  container-type: inline-size;
+  overflow: hidden;
 
   img {
     display: block;
@@ -117,6 +119,26 @@
     width: auto;
     height: 48px;
     image-rendering: pixelated;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .toolbar-clouds img {
+    animation: cloud-drift 24s ease-in-out infinite alternate;
+  }
+
+  .toolbar-clouds img:nth-child(2) {
+    animation-direction: alternate-reverse;
+    animation-duration: 32s;
+  }
+}
+
+@keyframes cloud-drift {
+  from {
+    transform: translateX(calc(-1 * max(0px, (100cqw - 160px) / 6)));
+  }
+  to {
+    transform: translateX(max(0px, (100cqw - 160px) / 6));
   }
 }
 
